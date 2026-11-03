@@ -36,7 +36,11 @@ export function CashflowScreen() {
                 widthPercent={month.barWidthPercent}
                 color={month.isOverspent ? colors.moneyOverspent : colors.moneyLeftOver}
               />
-              <AppText size={fontSizes.secondary} color={colors.secondaryText} style={styles.detail}>
+              <AppText
+                size={fontSizes.secondary}
+                color={colors.secondaryText}
+                style={styles.detail}
+              >
                 {month.detailText}
               </AppText>
             </View>
@@ -50,8 +54,20 @@ export function CashflowScreen() {
 const styles = StyleSheet.create({
   heading: { paddingTop: 16, paddingHorizontal: layout.screenPadding },
   mainNumber: { marginTop: 2, lineHeight: 57.2, letterSpacing: -2 },
-  months: { marginTop: 12, marginBottom: 20, marginHorizontal: layout.screenPadding },
-  month: { paddingVertical: 12, borderTopWidth: 1, borderTopColor: colors.divider },
-  monthTitleRow: { flexDirection: 'row', justifyContent: 'space-between', gap: 16 },
+  months: {
+    marginTop: 12,
+    marginBottom: 20,
+    marginHorizontal: layout.screenPadding,
+  },
+  month: {
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    borderTopColor: colors.divider,
+  },
+  monthTitleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 16,
+  },
   detail: { marginTop: 6 },
 });

@@ -17,7 +17,12 @@ const highRiskDriver = /high-risk|risk category/i;
 const billPaymentDriver = /essential payments/i;
 
 // These lines repeat numbers the screens already show from the metrics.
-const driversShownFromMetrics = [/income present/i, /no income/i, /income.*cover|coverage/i, /cashflow month/i];
+const driversShownFromMetrics = [
+  /income present/i,
+  /no income/i,
+  /income.*cover|coverage/i,
+  /cashflow month/i,
+];
 
 const knownDrivers = [
   savingsDriver,

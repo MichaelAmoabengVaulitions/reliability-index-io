@@ -72,7 +72,7 @@ describe('buildScoreGroups', () => {
     ]);
   });
 
-  it('shows a driver the app does not recognise under Also noted', () => {
+  it('shows a driver the app does not recognize under Also noted', () => {
     const score = {
       ...sampleScores.user_1009,
       otherDrivers: [{ text: 'New backend rule', points: -4 }],

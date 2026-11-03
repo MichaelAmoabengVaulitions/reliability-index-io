@@ -13,5 +13,8 @@ const pointsAtEnd = /\s*\(([+-]?\d+(?:\.\d+)?)\s*pts\)\s*$/;
 export function parseDriver(driver: string): ParsedDriver {
   const match = driver.match(pointsAtEnd);
   if (match === null) return { label: driver.trim(), points: 0 };
-  return { label: driver.replace(pointsAtEnd, '').trim(), points: Number(match[1]) };
+  return {
+    label: driver.replace(pointsAtEnd, '').trim(),
+    points: Number(match[1]),
+  };
 }

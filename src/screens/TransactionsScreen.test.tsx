@@ -5,6 +5,8 @@ import { renderWithProviders } from '@/test-utils/renderWithProviders';
 
 import { TransactionsScreen } from './TransactionsScreen';
 
+jest.mock('@shopify/flash-list', () => require('@/test-utils/mockFlashList'));
+
 /*
  * The category and sort fields open the system's list of options. This presses
  * one of those options, as a person would.

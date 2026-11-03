@@ -1,4 +1,17 @@
-const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const monthNames = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
 
 export const earliestScoringDate = '2026-02-28';
 export const scoringWindowMonths = 6;
@@ -20,7 +33,10 @@ function listMonthsInWindow(endDate: string): CalendarMonth[] {
   return Array.from({ length: scoringWindowMonths }, (_, position) => {
     const monthsFromStart = monthIndex - (scoringWindowMonths - 1) + position;
     const firstOfMonth = new Date(Date.UTC(year, monthsFromStart, 1));
-    return { year: firstOfMonth.getUTCFullYear(), monthIndex: firstOfMonth.getUTCMonth() };
+    return {
+      year: firstOfMonth.getUTCFullYear(),
+      monthIndex: firstOfMonth.getUTCMonth(),
+    };
   });
 }
 
@@ -42,7 +58,10 @@ export function describeScoringWindow(endDate: string) {
 }
 
 export function monthLabelsInScoringWindow(endDate: string): string[] {
-  return listMonthsInWindow(endDate).map(({ year, monthIndex }) => `${monthNames[monthIndex]} ${year}`);
+  const monthsInScoringWindow = listMonthsInWindow(endDate).map(
+    ({ year, monthIndex }) => `${monthNames[monthIndex]} ${year}`,
+  );
+  return monthsInScoringWindow;
 }
 
 export function formatDateForField(date: string): string {
