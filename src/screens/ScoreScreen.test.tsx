@@ -50,7 +50,9 @@ describe('ScoreScreen', () => {
   it('describes the score scale to screen readers', async () => {
     await renderWithProviders(<ScoreScreen />);
     expect(
-      screen.getByLabelText('Low is 0 to 49, Medium is 50 to 74, High is 75 to 100. This score is 90.'),
+      screen.getByLabelText(
+        'Low is 0 to 49, Medium is 50 to 74, High is 75 to 100. This score is 90.',
+      ),
     ).toBeOnTheScreen();
   });
 

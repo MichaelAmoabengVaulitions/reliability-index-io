@@ -1,6 +1,5 @@
 import { minusSign } from './score';
 
-
 function formatEuros(amount: number, decimalPlaces: number): string {
   const digits = amount.toLocaleString('en-US', {
     minimumFractionDigits: decimalPlaces,

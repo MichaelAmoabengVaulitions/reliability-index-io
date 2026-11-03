@@ -69,8 +69,16 @@ const styles = StyleSheet.create({
   heading: { paddingTop: 16, paddingHorizontal: layout.screenPadding },
   mainNumber: { marginTop: 2, lineHeight: 57.2, letterSpacing: -2 },
   steps: { marginTop: 12, marginHorizontal: layout.screenPadding },
-  step: { paddingVertical: 12, borderTopWidth: 1, borderTopColor: colors.divider },
-  stepTitleRow: { flexDirection: 'row', justifyContent: 'space-between', gap: 16 },
+  step: {
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    borderTopColor: colors.divider,
+  },
+  stepTitleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 16,
+  },
   stepName: { flex: 1 },
   note: { marginTop: 6, lineHeight: 21 },
   total: {

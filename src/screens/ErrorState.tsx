@@ -7,11 +7,7 @@ import { colors, fontSizes, layout } from '@/theme';
 export function ErrorState({ onRetry }: { onRetry: () => void }) {
   return (
     <View style={styles.content}>
-      <AppText
-        accessibilityRole="header"
-        size={fontSizes.errorHeading}
-        style={styles.heading}
-      >
+      <AppText accessibilityRole="header" size={fontSizes.errorHeading} style={styles.heading}>
         We couldn&apos;t load this score
       </AppText>
       <AppText color={colors.secondaryText} style={styles.message}>

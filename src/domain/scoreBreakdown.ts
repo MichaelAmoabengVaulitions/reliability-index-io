@@ -9,11 +9,23 @@ export interface BreakdownStep {
 }
 
 function pointsAdded(name: string, points: number, note: string): BreakdownStep {
-  return { name, points: `+${points}`, barWidthPercent: points, kind: 'added', note };
+  return {
+    name,
+    points: `+${points}`,
+    barWidthPercent: points,
+    kind: 'added',
+    note,
+  };
 }
 
 function pointsTakenAway(name: string, points: number, note: string): BreakdownStep {
-  return { name, points: `${minusSign}${points}`, barWidthPercent: points, kind: 'takenAway', note };
+  return {
+    name,
+    points: `${minusSign}${points}`,
+    barWidthPercent: points,
+    kind: 'takenAway',
+    note,
+  };
 }
 
 /*
@@ -22,8 +34,15 @@ function pointsTakenAway(name: string, points: number, note: string): BreakdownS
  * worked out here.
  */
 export function buildBreakdownSteps(score: ReliabilityScore): BreakdownStep[] {
-  const { savingsPoints, daysBelowZeroPenaltyPoints, lateFeePenaltyPoints } = score;
-  const { lateFees, highRiskPenaltyPoints, otherDrivers } = score;
+  const {
+    savingsPoints,
+    daysBelowZeroPenaltyPoints,
+    lateFeePenaltyPoints,
+    lateFees,
+    highRiskPenaltyPoints,
+    otherDrivers,
+  } = score ?? {};
+
   const otherPoints = otherDrivers.reduce((total, driver) => total + driver.points, 0);
   const incomeAndBillsPoints =
     score.score -

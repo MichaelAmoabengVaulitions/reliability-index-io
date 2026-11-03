@@ -8,7 +8,13 @@ import {
 } from './transactionList';
 
 const transactions: Transaction[] = [
-  { id: '1', date: '2026-05-02', merchantName: 'Bio Company', category: 'Groceries', amount: -76.13 },
+  {
+    id: '1',
+    date: '2026-05-02',
+    merchantName: 'Bio Company',
+    category: 'Groceries',
+    amount: -76.13,
+  },
   { id: '2', date: '2026-07-25', merchantName: 'BigTech AG', category: 'Salary', amount: 4200 },
   { id: '3', date: '2026-06-01', merchantName: 'Rent Office', category: 'Rent', amount: -1100 },
 ];

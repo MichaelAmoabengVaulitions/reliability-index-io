@@ -23,7 +23,11 @@ export function shouldRetry(failureCount: number, error: Error): boolean {
 export function createQueryClient(): QueryClient {
   return new QueryClient({
     defaultOptions: {
-      queries: { staleTime: staleTimeMs, gcTime: unusedDataKeptForMs, retry: shouldRetry },
+      queries: {
+        staleTime: staleTimeMs,
+        gcTime: unusedDataKeptForMs,
+        retry: shouldRetry,
+      },
     },
   });
 }

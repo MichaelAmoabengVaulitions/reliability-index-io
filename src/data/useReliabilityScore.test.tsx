@@ -2,7 +2,8 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react-native';
 import type { ReactNode } from 'react';
 
-import { createQueryClient } from './queryClient';
+import { createTestQueryClient } from '@/test-utils/createTestQueryClient';
+
 import { useReliabilityScore } from './useReliabilityScore';
 
 const responseBody = {
@@ -25,8 +26,7 @@ const responseBody = {
 const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>();
 
 function Providers({ children }: { children: ReactNode }) {
-  const queryClient = createQueryClient();
-  queryClient.setDefaultOptions({ queries: { retry: false } });
+  const queryClient = createTestQueryClient();
   return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 }
 
@@ -39,11 +39,23 @@ beforeEach(() => {
   globalThis.fetch = fetchMock as unknown as typeof fetch;
 });
 
+// Finishing the request at the end of a test stops its timeout from outliving the test.
+function holdRequestOpen() {
+  let finishRequest = () => {};
+  fetchMock.mockReturnValue(
+    new Promise((resolve) => {
+      finishRequest = () => resolve(new Response(JSON.stringify(responseBody)));
+    }),
+  );
+  return () => finishRequest();
+}
+
 describe('useReliabilityScore', () => {
   it('is loading until the backend answers', async () => {
-    fetchMock.mockReturnValue(new Promise(() => undefined));
+    const finishRequest = holdRequestOpen();
     const { result } = await renderScoreHook();
     expect(result.current.status).toBe('loading');
+    await act(async () => finishRequest());
   });
 
   it('asks for the selected user and end date, and returns the backend score', async () => {

@@ -1,9 +1,9 @@
 import { QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen } from '@testing-library/react-native';
+import { act, fireEvent, render, screen } from '@testing-library/react-native';
 import { Text } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { createQueryClient } from '@/data/queryClient';
+import { createTestQueryClient } from '@/test-utils/createTestQueryClient';
 
 import { SelectionProvider, useSelection } from './SelectionContext';
 import { UsersGate } from './UsersGate';
@@ -19,8 +19,7 @@ function SelectedUser() {
 }
 
 async function renderGate() {
-  const queryClient = createQueryClient();
-  queryClient.setDefaultOptions({ queries: { retry: false } });
+  const queryClient = createTestQueryClient();
   await render(
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider initialMetrics={screenMetrics}>
@@ -45,11 +44,23 @@ beforeEach(() => {
   globalThis.fetch = fetchMock as unknown as typeof fetch;
 });
 
+// Finishing the request at the end of a test stops its timeout from outliving the test.
+function holdRequestOpen() {
+  let finishRequest = () => {};
+  fetchMock.mockReturnValue(
+    new Promise((resolve) => {
+      finishRequest = () => resolve(usersResponse());
+    }),
+  );
+  return () => finishRequest();
+}
+
 describe('UsersGate', () => {
   it('shows the loading state until the users arrive', async () => {
-    fetchMock.mockReturnValue(new Promise(() => undefined));
+    const finishRequest = holdRequestOpen();
     await renderGate();
     expect(screen.getByLabelText('Loading score')).toBeOnTheScreen();
+    await act(async () => finishRequest());
   });
 
   it('selects the first user the backend lists', async () => {

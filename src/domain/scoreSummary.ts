@@ -31,10 +31,22 @@ function formatDriverPoints(points: number): string {
 
 export function buildKeyNumbers(score: ReliabilityScore): KeyNumber[] {
   return [
-    { label: 'Months with income', value: `${score.monthsWithIncome} of ${scoringWindowMonths}` },
-    { label: 'Income compared with bills', value: describeBillsComparison(score) },
-    { label: 'Essential bills paid', value: `${score.essentialBillsPaidPercent}%` },
-    { label: 'Good months', value: `${score.goodMonths} of ${scoringWindowMonths}` },
+    {
+      label: 'Months with income',
+      value: `${score.monthsWithIncome} of ${scoringWindowMonths}`,
+    },
+    {
+      label: 'Income compared with bills',
+      value: describeBillsComparison(score),
+    },
+    {
+      label: 'Essential bills paid',
+      value: `${score.essentialBillsPaidPercent}%`,
+    },
+    {
+      label: 'Good months',
+      value: `${score.goodMonths} of ${scoringWindowMonths}`,
+    },
     { label: 'Late fees', value: `${score.lateFees}` },
     { label: 'Estimated days below zero', value: `${score.daysBelowZero}` },
   ];
