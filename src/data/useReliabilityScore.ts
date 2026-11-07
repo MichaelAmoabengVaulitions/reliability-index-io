@@ -11,10 +11,11 @@ export interface ReliabilityScoreResult {
 }
 
 export function useReliabilityScore(userId: string, endDate: string): ReliabilityScoreResult {
-  const { data, isPending, isError, refetch } = useQuery(reliabilityQuery(userId, endDate));
+  const { data, isError, refetch } = useQuery(reliabilityQuery(userId, endDate));
   const retry = () => void refetch();
 
+  // A failed refresh keeps the score already on screen. The error only shows when there is none.
+  if (data !== undefined) return { status: 'ready', score: data, retry };
   if (isError) return { status: 'error', score: undefined, retry };
-  if (isPending) return { status: 'loading', score: undefined, retry };
-  return { status: 'ready', score: data, retry };
+  return { status: 'loading', score: undefined, retry };
 }

@@ -3,6 +3,7 @@ import { act, renderHook, waitFor } from '@testing-library/react-native';
 import type { ReactNode } from 'react';
 
 import { createTestQueryClient } from '@/test-utils/createTestQueryClient';
+import { letReactQueryUpdate } from '@/test-utils/letReactQueryUpdate';
 
 import { transactionsQuery } from './queries';
 import { useTransactions } from './useTransactions';
@@ -175,6 +176,24 @@ describe('useTransactions', () => {
     expect(transactionRequests()).toHaveLength(2);
     expect(queryClient.getQueryData(queryKey)?.transactions).toEqual([]);
     await waitFor(() => expect(result.current.transactions).toEqual([]));
+  });
+
+  it('keeps showing the transactions when fetching them again fails', async () => {
+    answerRequests(async () => pageResponse(['1'], false));
+    const queryClient = createTestQueryClient();
+    const { result } = await renderTransactionsHook(queryClient);
+    await waitFor(() => expect(result.current.status).toBe('ready'));
+
+    answerRequests(async () => {
+      throw new TypeError('Network request failed');
+    });
+    await act(async () => result.current.retry());
+
+    const { queryKey } = transactionsQuery('user_1001', '2026-10-31');
+    await waitFor(() => expect(queryClient.getQueryState(queryKey)?.status).toBe('error'));
+    await letReactQueryUpdate();
+    expect(result.current.status).toBe('ready');
+    expect(result.current.transactions.map(({ id }) => id)).toEqual(['1']);
   });
 
   it('reports an error, and recovers when retried', async () => {

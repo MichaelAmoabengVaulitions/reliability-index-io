@@ -1,9 +1,11 @@
-import { QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider, type QueryClient } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react-native';
 import type { ReactNode } from 'react';
 
 import { createTestQueryClient } from '@/test-utils/createTestQueryClient';
+import { letReactQueryUpdate } from '@/test-utils/letReactQueryUpdate';
 
+import { reliabilityQuery } from './queries';
 import { useReliabilityScore } from './useReliabilityScore';
 
 const responseBody = {
@@ -25,12 +27,10 @@ const responseBody = {
 
 const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>();
 
-function Providers({ children }: { children: ReactNode }) {
-  const queryClient = createTestQueryClient();
-  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
-}
-
-function renderScoreHook() {
+function renderScoreHook(queryClient: QueryClient = createTestQueryClient()) {
+  const Providers = ({ children }: { children: ReactNode }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
   return renderHook(() => useReliabilityScore('user_1001', '2026-10-31'), { wrapper: Providers });
 }
 
@@ -68,6 +68,22 @@ describe('useReliabilityScore', () => {
     expect(fetchMock.mock.calls[0][0]).toMatch(
       /\/api\/users\/user_1001\/reliability\?from=2026-10-31$/,
     );
+  });
+
+  it('keeps showing the score when fetching it again fails', async () => {
+    fetchMock.mockResolvedValueOnce(new Response(JSON.stringify(responseBody)));
+    const queryClient = createTestQueryClient();
+    const { result } = await renderScoreHook(queryClient);
+    await waitFor(() => expect(result.current.status).toBe('ready'));
+
+    fetchMock.mockRejectedValueOnce(new TypeError('Network request failed'));
+    await act(async () => result.current.retry());
+
+    const { queryKey } = reliabilityQuery('user_1001', '2026-10-31');
+    await waitFor(() => expect(queryClient.getQueryState(queryKey)?.status).toBe('error'));
+    await letReactQueryUpdate();
+    expect(result.current.status).toBe('ready');
+    expect(result.current.score).toMatchObject({ score: 64 });
   });
 
   it('reports an error, and recovers when retried', async () => {
