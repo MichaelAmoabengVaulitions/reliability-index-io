@@ -76,6 +76,12 @@ export function scoringWindowDates(endDate: string) {
   return { start: `${start.year}-${startMonth}-01`, end: endDate };
 }
 
+// The month a date falls in, written the same way as the scoring window's months.
+export function formatMonthOfDate(date: string): string {
+  const { year, monthIndex } = readDate(date);
+  return `${monthNames[monthIndex]} ${year}`;
+}
+
 export function formatDateForRow(date: string): string {
   const { monthIndex, day } = readDate(date);
   return `${monthNames[monthIndex]} ${day}`;
