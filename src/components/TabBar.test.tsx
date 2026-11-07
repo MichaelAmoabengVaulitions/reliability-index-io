@@ -34,6 +34,13 @@ describe('TabBar', () => {
     expect(screen.getByRole('tab', { name: 'Score', selected: false })).toBeOnTheScreen();
   });
 
+  it('shows the selected tab in blue and the others in grey', async () => {
+    await renderTabBar(3);
+
+    expect(screen.getByText('Transactions')).toHaveStyle({ color: '#2563EB' });
+    expect(screen.getByText('Score')).toHaveStyle({ color: '#4F4F59' });
+  });
+
   it('opens a tab when pressed', async () => {
     const navigateToTab = jest.fn();
     await renderTabBar(0, navigateToTab);
