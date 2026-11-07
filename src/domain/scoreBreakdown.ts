@@ -41,7 +41,7 @@ export function buildBreakdownSteps(score: ReliabilityScore): BreakdownStep[] {
     lateFees,
     highRiskPenaltyPoints,
     otherDrivers,
-  } = score ?? {};
+  } = score;
 
   const otherPoints = otherDrivers.reduce((total, driver) => total + driver.points, 0);
   const incomeAndBillsPoints =

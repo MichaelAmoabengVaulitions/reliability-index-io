@@ -19,9 +19,14 @@ export interface ScoreGroup {
 // Income in at least this many months counts as helping the score.
 const helpingMonthsMinimum = 3;
 
+// The key numbers and the helping line show the same ratio, so both use this.
+function formatTimes(ratio: number): string {
+  return `${ratio.toFixed(2)} times`;
+}
+
 function describeBillsComparison(score: ReliabilityScore): string {
   if (score.incomeComparedWithBills === null) return 'No bills found';
-  return `${score.incomeComparedWithBills.toFixed(2)} times`;
+  return formatTimes(score.incomeComparedWithBills);
 }
 
 function formatDriverPoints(points: number): string {
@@ -65,10 +70,15 @@ export function buildScoreGroups(score: ReliabilityScore): ScoreGroup[] {
 
   const comparison = score.incomeComparedWithBills;
   const hasNoIncomeOrBills = score.monthsWithIncome === 0 && score.essentialBillsPaidPercent === 0;
-  if (comparison === null) add(noted, 'No essential bills found');
-  else if (comparison >= 1) add(helping, `Income covers essential bills ${comparison} times`);
-  else if (hasNoIncomeOrBills) add(hurting, 'No income or essential bills found');
-  else add(hurting, 'Income does not cover essential bills');
+  if (comparison === null) {
+    add(noted, 'No essential bills found');
+  } else if (comparison >= 1) {
+    add(helping, `Income covers essential bills ${formatTimes(comparison)}`);
+  } else if (hasNoIncomeOrBills) {
+    add(hurting, 'No income or essential bills found');
+  } else {
+    add(hurting, 'Income does not cover essential bills');
+  }
 
   if (score.billPayment === 'regular') add(helping, 'Essential bills paid regularly');
   if (score.billPayment === 'gaps') add(hurting, 'Essential bills paid, with some gaps');
