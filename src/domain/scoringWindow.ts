@@ -69,6 +69,13 @@ export function formatDateForField(date: string): string {
   return `${month}/${day}/${year}`;
 }
 
+// The dates to ask the backend for: the first day of the window up to the end date.
+export function scoringWindowDates(endDate: string) {
+  const [start] = listMonthsInWindow(endDate);
+  const startMonth = String(start.monthIndex + 1).padStart(2, '0');
+  return { start: `${start.year}-${startMonth}-01`, end: endDate };
+}
+
 export function formatDateForRow(date: string): string {
   const { monthIndex, day } = readDate(date);
   return `${monthNames[monthIndex]} ${day}`;

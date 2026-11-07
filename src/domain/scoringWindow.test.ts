@@ -2,8 +2,15 @@ import {
   describeScoringWindow,
   formatDateForField,
   monthLabelsInScoringWindow,
+  scoringWindowDates,
   todayAsDate,
 } from './scoringWindow';
+
+describe('scoringWindowDates', () => {
+  it('starts on the first day of the oldest month and ends on the end date', () => {
+    expect(scoringWindowDates('2026-02-20')).toEqual({ start: '2025-09-01', end: '2026-02-20' });
+  });
+});
 
 describe('describeScoringWindow', () => {
   it('describes a window inside one year', () => {

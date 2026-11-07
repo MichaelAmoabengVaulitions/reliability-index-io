@@ -27,7 +27,7 @@ export function TabBar({ state, navigateToTab }: TabBarProps) {
     <View style={[styles.bar, { height: layout.tabBarContentHeight + bottomSpace }]}>
       {state.routes.map((route, position) => {
         const isActive = position === state.index;
-        const inkColor = isActive ? colors.text : colors.secondaryText;
+        const inkColor = isActive ? colors.tabSelected : colors.secondaryText;
         const label = tabLabels[route.name];
 
         return (

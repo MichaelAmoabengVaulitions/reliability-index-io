@@ -11,6 +11,10 @@ export const colors = {
   moneyLeftOver: '#13B8A8',
   moneyOverspent: '#F2643C',
   sheetBackdrop: 'rgba(17, 17, 20, 0.4)',
+  // Not in the design. Dark enough to read as small text on white.
+  tabSelected: '#2563EB',
+  streamConnected: '#15803D',
+  streamConnecting: '#B45309',
 } as const;
 
 // A custom font has one file per weight, so weight is chosen by font family.
