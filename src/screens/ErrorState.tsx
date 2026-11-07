@@ -4,11 +4,16 @@ import { AppText } from '@/components/AppText';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { colors, fontSizes, layout } from '@/theme';
 
-export function ErrorState({ onRetry }: { onRetry: () => void }) {
+interface ErrorStateProps {
+  onRetry: () => void;
+  title?: string;
+}
+
+export function ErrorState({ onRetry, title = "We couldn't load this score" }: ErrorStateProps) {
   return (
     <View style={styles.content}>
       <AppText accessibilityRole="header" size={fontSizes.errorHeading} style={styles.heading}>
-        We couldn&apos;t load this score
+        {title}
       </AppText>
       <AppText color={colors.secondaryText} style={styles.message}>
         The connection may have dropped. Nothing has been lost, so try again.

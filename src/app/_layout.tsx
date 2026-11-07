@@ -4,6 +4,7 @@ import { SplashScreen, Stack } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { LiveUpdatesProvider } from '@/data/LiveUpdates';
 import { createQueryClient } from '@/data/queryClient';
 import { SelectionProvider } from '@/selection/SelectionContext';
 
@@ -24,7 +25,9 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
         <SelectionProvider>
-          <Stack screenOptions={{ headerShown: false }} />
+          <LiveUpdatesProvider>
+            <Stack screenOptions={{ headerShown: false }} />
+          </LiveUpdatesProvider>
         </SelectionProvider>
       </SafeAreaProvider>
     </QueryClientProvider>

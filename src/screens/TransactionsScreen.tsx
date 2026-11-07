@@ -6,6 +6,8 @@ import { AppText } from '@/components/AppText';
 import { ScreenContainer } from '@/components/ScreenContainer';
 import { SelectField } from '@/components/SelectField';
 import { SelectionHeader } from '@/components/SelectionHeader';
+import { useLiveUpdates } from '@/data/LiveUpdates';
+import { useTransactions } from '@/data/useTransactions';
 import { formatTransactionAmount } from '@/domain/money';
 import { formatDateForRow } from '@/domain/scoringWindow';
 import {
@@ -17,9 +19,11 @@ import {
   type TransactionDirection,
   type TransactionFilters,
 } from '@/domain/transactionList';
-import { dummyTransactions } from '@/dummy-data/transactions';
 import { useSelection } from '@/selection/SelectionContext';
 import { colors, fontFamilies, fontSizes, layout } from '@/theme';
+
+import { ErrorState } from './ErrorState';
+import { LoadingState } from './LoadingState';
 
 const directionTabs: { direction: TransactionDirection; label: string }[] = [
   { direction: 'all', label: 'All' },
@@ -27,28 +31,37 @@ const directionTabs: { direction: TransactionDirection; label: string }[] = [
   { direction: 'moneyOut', label: 'Money out' },
 ];
 
-const categories = listCategories(dummyTransactions);
-
 export function TransactionsScreen() {
-  const { selectedUserId } = useSelection();
+  const { selectedUserId, scoringWindowEndDate } = useSelection();
+  const { status, transactions, retry } = useTransactions(selectedUserId, scoringWindowEndDate);
 
   return (
     <ScreenContainer>
-      <SelectionHeader />
-      {/* The key gives each user a fresh list with clear filters. */}
-      <TransactionList key={selectedUserId} />
+      {status === 'loading' && <LoadingState label="Loading transactions" />}
+      {status === 'error' && (
+        <ErrorState title="We couldn't load these transactions" onRetry={retry} />
+      )}
+      {status === 'ready' && (
+        <>
+          <SelectionHeader />
+          {/* The key gives each user a fresh list with clear filters. */}
+          <TransactionList key={selectedUserId} transactions={transactions} />
+        </>
+      )}
     </ScreenContainer>
   );
 }
 
-function TransactionList() {
+function TransactionList({ transactions }: { transactions: Transaction[] }) {
+  const { isConnected } = useLiveUpdates();
   const [filters, setFilters] = useState(defaultTransactionFilters);
   const updateFilters = (changes: Partial<TransactionFilters>) =>
     setFilters((current) => ({ ...current, ...changes }));
 
+  const categories = useMemo(() => listCategories(transactions), [transactions]);
   const visibleTransactions = useMemo(
-    () => filterAndSortTransactions(dummyTransactions, filters),
-    [filters],
+    () => filterAndSortTransactions(transactions, filters),
+    [transactions, filters],
   );
 
   return (
@@ -102,11 +115,9 @@ function TransactionList() {
 
       <View style={styles.statusRow}>
         <AppText size={fontSizes.secondary} color={colors.secondaryText}>
-          {visibleTransactions.length} of {dummyTransactions.length} transactions
+          {visibleTransactions.length} of {transactions.length} transactions
         </AppText>
-        <AppText size={fontSizes.secondary} color={colors.secondaryText}>
-          Live
-        </AppText>
+        <StreamStatus isConnected={isConnected} />
       </View>
 
       <View style={styles.list}>
@@ -116,11 +127,28 @@ function TransactionList() {
           renderItem={({ item }) => <TransactionRow transaction={item} />}
           keyboardShouldPersistTaps="handled"
           ListEmptyComponent={
-            <NoMatchingTransactions onClear={() => setFilters(defaultTransactionFilters)} />
+            transactions.length === 0 ? (
+              <NoTransactionsInWindow />
+            ) : (
+              <NoMatchingTransactions onClear={() => setFilters(defaultTransactionFilters)} />
+            )
           }
         />
       </View>
     </>
+  );
+}
+
+// The dot and the word both change, so the state is clear without relying on colour alone.
+function StreamStatus({ isConnected }: { isConnected: boolean }) {
+  const color = isConnected ? colors.streamConnected : colors.streamConnecting;
+  return (
+    <View style={styles.streamStatus}>
+      <View style={[styles.streamDot, { backgroundColor: color }]} />
+      <AppText size={fontSizes.secondary} weight="medium" color={color}>
+        {isConnected ? 'Live' : 'Connecting'}
+      </AppText>
+    </View>
   );
 }
 
@@ -134,6 +162,15 @@ function TransactionRow({ transaction }: { transaction: Transaction }) {
         </AppText>
       </View>
       <AppText weight="medium">{formatTransactionAmount(transaction.amount)}</AppText>
+    </View>
+  );
+}
+
+// Filters can't help when the window itself is empty, so there is no button here.
+function NoTransactionsInWindow() {
+  return (
+    <View style={styles.emptyState}>
+      <AppText size={fontSizes.emphasis}>No transactions in this window</AppText>
     </View>
   );
 }
@@ -187,6 +224,8 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginHorizontal: layout.screenPadding,
   },
+  streamStatus: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  streamDot: { width: 8, height: 8, borderRadius: 4 },
   list: { flex: 1, marginTop: 16, marginHorizontal: layout.screenPadding },
   row: {
     height: layout.transactionRowHeight,

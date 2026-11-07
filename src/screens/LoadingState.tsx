@@ -4,10 +4,10 @@ import { colors, layout } from '@/theme';
 
 const textLineCount = 4;
 
-// Grey shapes from the design that stand in for the score while it loads.
-export function LoadingState() {
+// Grey shapes from the design that stand in for the content while it loads.
+export function LoadingState({ label = 'Loading score' }: { label?: string }) {
   return (
-    <View accessible accessibilityLabel="Loading score" style={styles.content}>
+    <View accessible accessibilityLabel={label} style={styles.content}>
       <View style={[styles.shape, styles.userButton]} />
       <View style={[styles.shape, styles.scoreNumber]} />
       <View style={[styles.shape, styles.band]} />

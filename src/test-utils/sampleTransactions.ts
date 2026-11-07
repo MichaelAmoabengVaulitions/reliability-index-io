@@ -1,7 +1,7 @@
 import type { Transaction } from '@/domain/transactionList';
 
-// Sample rows from the design, used until the app reads live data.
-export const dummyTransactions: Transaction[] = [
+// Sample rows from the design, for tests only. The app shows live data.
+export const sampleTransactions: Transaction[] = [
   {
     id: 'transaction_1',
     date: '2026-09-02',
