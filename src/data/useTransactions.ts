@@ -17,7 +17,7 @@ export interface TransactionsResult {
  * waits for the transactions only: if the names fail, the codes show instead.
  */
 export function useTransactions(userId: string, endDate: string): TransactionsResult {
-  const { data, isPending, isError, refetch } = useQuery(transactionsQuery(userId, endDate));
+  const { data, isError, refetch } = useQuery(transactionsQuery(userId, endDate));
   const { data: categories } = useQuery(merchantCategoriesQuery);
   const transactions = useMemo(
     () => toTransactions(data?.transactions ?? [], categories),
@@ -25,7 +25,8 @@ export function useTransactions(userId: string, endDate: string): TransactionsRe
   );
   const retry = () => void refetch();
 
+  // A failed refresh keeps the list already on screen. The error only shows when there is none.
+  if (data !== undefined) return { status: 'ready', transactions, retry };
   if (isError) return { status: 'error', transactions: [], retry };
-  if (isPending) return { status: 'loading', transactions: [], retry };
-  return { status: 'ready', transactions, retry };
+  return { status: 'loading', transactions: [], retry };
 }
