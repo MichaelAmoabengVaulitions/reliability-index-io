@@ -1,9 +1,35 @@
 import { formatWholeAmount } from './money';
+import { formatMonthOfDate, monthLabelsInScoringWindow } from './scoringWindow';
+import type { Transaction } from './transactionList';
 
 export interface MonthlyCashflow {
   label: string;
   moneyIn: number;
   moneyOut: number;
+}
+
+/*
+ * Adds up money in and money out for each of the six months, oldest first.
+ * Every month is listed, so a month with no transactions shows as zero.
+ */
+export function buildMonthlyCashflow(
+  transactions: Transaction[],
+  endDate: string,
+): MonthlyCashflow[] {
+  const months = monthLabelsInScoringWindow(endDate).map((label) => ({
+    label,
+    moneyIn: 0,
+    moneyOut: 0,
+  }));
+  const monthsByLabel = new Map(months.map((month) => [month.label, month]));
+
+  for (const { date, amount } of transactions) {
+    const month = monthsByLabel.get(formatMonthOfDate(date));
+    if (month === undefined) continue;
+    if (amount > 0) month.moneyIn += amount;
+    else month.moneyOut += Math.abs(amount);
+  }
+  return months;
 }
 
 export function summarizeCashflow(months: MonthlyCashflow[]) {
