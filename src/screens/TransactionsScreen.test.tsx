@@ -5,6 +5,7 @@ import { useLiveUpdates } from '@/data/LiveUpdates';
 import { useTransactions, type TransactionsResult } from '@/data/useTransactions';
 import { renderWithProviders } from '@/test-utils/renderWithProviders';
 import { sampleTransactions } from '@/test-utils/sampleTransactions';
+import { colors } from '@/theme';
 
 import { TransactionsScreen } from './TransactionsScreen';
 
@@ -73,7 +74,7 @@ describe('TransactionsScreen', () => {
   it('shows "Live" in green while the stream is connected', async () => {
     await renderWithProviders(<TransactionsScreen />);
 
-    expect(screen.getByText('Live')).toHaveStyle({ color: '#15803D' });
+    expect(screen.getByText('Live')).toHaveStyle({ color: colors.streamConnected });
     expect(screen.queryByText('Connecting')).not.toBeOnTheScreen();
   });
 
@@ -81,7 +82,7 @@ describe('TransactionsScreen', () => {
     jest.mocked(useLiveUpdates).mockReturnValue({ isConnected: false });
     await renderWithProviders(<TransactionsScreen />);
 
-    expect(screen.getByText('Connecting')).toHaveStyle({ color: '#B45309' });
+    expect(screen.getByText('Connecting')).toHaveStyle({ color: colors.streamConnecting });
     expect(screen.queryByText('Live')).not.toBeOnTheScreen();
   });
 

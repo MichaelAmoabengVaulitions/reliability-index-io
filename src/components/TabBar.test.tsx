@@ -1,6 +1,8 @@
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { colors } from '@/theme';
+
 import { TabBar } from './TabBar';
 
 const routes = [
@@ -37,8 +39,8 @@ describe('TabBar', () => {
   it('shows the selected tab in blue and the others in grey', async () => {
     await renderTabBar(3);
 
-    expect(screen.getByText('Transactions')).toHaveStyle({ color: '#2563EB' });
-    expect(screen.getByText('Score')).toHaveStyle({ color: '#4F4F59' });
+    expect(screen.getByText('Transactions')).toHaveStyle({ color: colors.tabSelected });
+    expect(screen.getByText('Score')).toHaveStyle({ color: colors.secondaryText });
   });
 
   it('opens a tab when pressed', async () => {
