@@ -467,6 +467,19 @@ describe('useTransactionEventStream', () => {
     await waitFor(() => expect(result.current.status).toBe('open'));
   });
 
+  it('stays idle and opens no stream when discovery names no stream host', () => {
+    const queryClient = new QueryClient();
+    queryClient.setQueryData(queryKeys.discovery, {
+      userIds: [USER_ID],
+      streamBaseUrl: undefined,
+    });
+    const { result } = renderHook(() => useTransactionEventStream(USER_ID, FROM, TO), {
+      wrapper: buildWrapper(queryClient),
+    });
+    expect(MockEventSource.last).toBeNull();
+    expect(result.current.status).toBe('idle');
+  });
+
   it('reports an idle status when no user is selected', () => {
     const queryClient = createClient();
     const { result } = renderHook(() => useTransactionEventStream('', FROM, TO), {

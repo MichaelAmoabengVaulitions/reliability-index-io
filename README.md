@@ -41,7 +41,9 @@ to be called with `yarn run check`, both here and inside each app.
 - Shared code is in `packages/core`. The apps import it by file, for example
   `@reliability-index/core/api/schemas`. It is TypeScript source with no build
   step: Vite and Metro compile it along with each app. It holds the API
-  schemas so far, and owns the `zod` dependency for both apps.
+  schemas and the API client so far, and owns the `zod` dependency for both
+  apps. Each app passes its own settings to the client, such as which host to
+  call.
 
 ## History
 
