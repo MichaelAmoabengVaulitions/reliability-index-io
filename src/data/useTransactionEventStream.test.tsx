@@ -67,6 +67,20 @@ async function renderStream({ hasStreamHost = true, transactionsLoaded = true }:
   return { ...rendered, queryClient, storedIds };
 }
 
+// Fails the latest stream, then checks that a new one opens after the wait, and not before.
+async function expectReconnectAfter(
+  waitMs: number,
+  fail = () => FakeEventSource.latest().dropConnection(),
+) {
+  const streamCount = FakeEventSource.opened.length;
+  await act(async () => fail());
+
+  await act(async () => jest.advanceTimersByTime(waitMs - 1));
+  expect(FakeEventSource.opened).toHaveLength(streamCount);
+  await act(async () => jest.advanceTimersByTime(1));
+  expect(FakeEventSource.opened).toHaveLength(streamCount + 1);
+}
+
 // Lets the stream's batch timer run, so waiting events are applied.
 async function waitForBatch() {
   await act(async () => jest.advanceTimersByTime(100));
@@ -204,8 +218,43 @@ describe('useTransactionEventStream', () => {
     await act(async () => firstStream.dropConnection());
     expect(firstStream.isClosed).toBe(true);
 
-    await act(async () => jest.advanceTimersByTime(2000));
+    await act(async () => jest.advanceTimersByTime(1000));
     expect(FakeEventSource.opened).toHaveLength(2);
+  });
+
+  it('waits longer each time connecting fails', async () => {
+    await renderStream();
+
+    await expectReconnectAfter(1000);
+    await expectReconnectAfter(2000);
+    await expectReconnectAfter(4000);
+  });
+
+  it('waits the shortest time again once the stream connects', async () => {
+    await renderStream();
+    await expectReconnectAfter(1000);
+    await expectReconnectAfter(2000);
+
+    await act(async () => FakeEventSource.latest().open());
+
+    await expectReconnectAfter(1000);
+  });
+
+  it('never waits longer than 30 seconds', async () => {
+    await renderStream();
+    for (const waitMs of [1000, 2000, 4000, 8000, 16000]) await expectReconnectAfter(waitMs);
+
+    await expectReconnectAfter(30000);
+    await expectReconnectAfter(30000);
+  });
+
+  it('waits longer each time the server answers with an error', async () => {
+    await renderStream();
+    const answerWithError = () => FakeEventSource.latest().answerWithError(503);
+
+    await expectReconnectAfter(1000, answerWithError);
+    expect(FakeEventSource.opened[0].isClosed).toBe(true);
+    await expectReconnectAfter(2000, answerWithError);
   });
 
   it('closes the stream when it is no longer needed', async () => {

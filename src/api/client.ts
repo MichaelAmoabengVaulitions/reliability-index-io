@@ -44,13 +44,10 @@ export class ValidationError extends Error {
 async function readErrorMessage(response: Response, fallback: string): Promise<string> {
   try {
     const body: unknown = await response.json();
-    if (
-      body !== null &&
-      typeof body === 'object' &&
-      'error' in body &&
-      typeof body.error === 'string'
-    ) {
-      return body.error;
+    if (body !== null && typeof body === 'object') {
+      // Our API sends `error`. The gateway in front of it sends `message`.
+      if ('error' in body && typeof body.error === 'string') return body.error;
+      if ('message' in body && typeof body.message === 'string') return body.message;
     }
   } catch {
     // The body was not JSON, so use the fallback message instead.

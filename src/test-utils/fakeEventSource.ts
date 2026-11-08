@@ -43,6 +43,10 @@ export class FakeEventSource {
     this.dispatch('error', { type: 'error', message: '', xhrStatus: 0, xhrState: 4 });
   }
 
+  answerWithError(status: number) {
+    this.dispatch('error', { type: 'error', message: '', xhrStatus: status, xhrState: 4 });
+  }
+
   private dispatch(type: string, event: unknown) {
     this.listeners.get(type)?.forEach((listener) => listener(event));
   }

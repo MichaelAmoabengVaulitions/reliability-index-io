@@ -13,5 +13,8 @@ export const apiSettings = {
     scoreRefreshDelayMs: 2_000,
     // The stream closes after about 30 seconds, so it is opened again after this wait.
     reconnectDelayMs: 2_000,
+    // After a failed connection the wait starts here and doubles each time, up to the longest.
+    reconnectFirstDelayMs: 1_000,
+    reconnectLongestDelayMs: 30_000,
   },
 } as const;
