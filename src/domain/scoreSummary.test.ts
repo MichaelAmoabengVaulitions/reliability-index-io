@@ -38,6 +38,16 @@ describe('buildScoreGroups', () => {
     ]);
   });
 
+  it('rounds the income comparison to two decimals, as the key numbers do', () => {
+    const score = { ...sampleScores.user_1009, incomeComparedWithBills: 1.8333333 };
+    const helping = buildScoreGroups(score).find((group) => group.title === 'What is helping');
+
+    expect(helping?.items).toContainEqual({
+      text: 'Income covers essential bills 1.83 times',
+      points: '',
+    });
+  });
+
   it('lists every penalty under what is hurting', () => {
     expect(groupTitled('user_1004', 'What is hurting')?.items).toEqual([
       { text: 'Essential bills paid, with some gaps', points: '' },
