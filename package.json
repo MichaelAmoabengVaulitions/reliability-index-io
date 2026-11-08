@@ -1,0 +1,18 @@
+{
+  "name": "reliability-index-io",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "apps/*",
+      "packages/*"
+    ],
+    "nohoist": [
+      "reliability-index-explorer/**"
+    ]
+  },
+  "scripts": {
+    "web": "yarn workspace reliability-index-explorer dev",
+    "mobile": "yarn workspace reliability-index-mobile start",
+    "check": "yarn workspace reliability-index-explorer run check && yarn workspace reliability-index-mobile run check"
+  }
+}
