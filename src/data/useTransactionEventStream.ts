@@ -29,7 +29,13 @@ const transactionEventTypes: TransactionEventType[] = [
   'TRANSACTION_DELETED',
 ];
 
-const { batchMs, scoreRefreshDelayMs, reconnectDelayMs } = apiSettings.liveUpdates;
+const {
+  batchMs,
+  scoreRefreshDelayMs,
+  reconnectDelayMs,
+  reconnectFirstDelayMs,
+  reconnectLongestDelayMs,
+} = apiSettings.liveUpdates;
 
 function readEvent(message: CustomEvent<TransactionEventType>): TransactionEvent | undefined {
   try {
@@ -64,6 +70,7 @@ export function useTransactionEventStream(userId: string, endDate: string): bool
     let batchTimer: ReturnType<typeof setTimeout> | undefined;
     let scoreRefreshTimer: ReturnType<typeof setTimeout> | undefined;
     let reconnectTimer: ReturnType<typeof setTimeout> | undefined;
+    let reconnectDelay: number = reconnectFirstDelayMs;
     let stream: EventSource<TransactionEventType>;
 
     const applyPendingEvents = () => {
@@ -110,14 +117,16 @@ export function useTransactionEventStream(userId: string, endDate: string): bool
       stream = new EventSource<TransactionEventType>(transactionEventsUrl(streamBaseUrl, userId), {
         pollingInterval: reconnectDelayMs,
       });
-      stream.addEventListener('open', () => setIsLive(true));
-      stream.addEventListener('error', (error) => {
+      stream.addEventListener('open', () => {
+        reconnectDelay = reconnectFirstDelayMs;
+        setIsLive(true);
+      });
+      // Closing stops the package's own retry, so every failure waits longer before the next try.
+      stream.addEventListener('error', () => {
         setIsLive(false);
-        // The package retries when the server answers with an error, but not when the connection drops.
-        const serverAnswered = error.type === 'error' && error.xhrStatus >= 400;
-        if (serverAnswered) return;
         stream.close();
-        reconnectTimer = setTimeout(connect, reconnectDelayMs);
+        reconnectTimer = setTimeout(connect, reconnectDelay);
+        reconnectDelay = Math.min(reconnectDelay * 2, reconnectLongestDelayMs);
       });
       for (const type of transactionEventTypes) stream.addEventListener(type, receiveEvent);
     };

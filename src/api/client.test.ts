@@ -91,6 +91,17 @@ describe('fetchReliability', () => {
     await expect(failure).rejects.toMatchObject({ status: 404, message: 'User not found' });
   });
 
+  it('reports the message the gateway sends with a failure', async () => {
+    fetchMock.mockResolvedValue(jsonResponse({ message: 'Too many requests, slow down' }, 429));
+
+    const failure = fetchReliability('user_1001', '2026-02-20');
+
+    await expect(failure).rejects.toMatchObject({
+      status: 429,
+      message: 'Too many requests, slow down',
+    });
+  });
+
   it('rejects a response that does not match what we expect', async () => {
     fetchMock.mockResolvedValue(jsonResponse({ ...reliabilityResponse, score_band: 'UNKNOWN' }));
 
