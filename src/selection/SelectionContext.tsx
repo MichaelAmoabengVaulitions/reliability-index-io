@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { AppState } from 'react-native';
 
 import { discoveryQuery } from '@/data/queries';
 import { todayAsDate } from '@/domain/scoringWindow';
@@ -27,10 +28,21 @@ export function SelectionProvider({ children, initialEndDate }: SelectionProvide
   const { data: discovery } = useQuery(discoveryQuery);
   const userIds = discovery?.userIds ?? noUsers;
   const [pickedUserId, selectUser] = useState<string | null>(null);
-  const [scoringWindowEndDate, selectScoringWindowEndDate] = useState(
-    initialEndDate ?? todayAsDate(),
+  const [pickedEndDate, selectScoringWindowEndDate] = useState<string | null>(
+    initialEndDate ?? null,
   );
+  const [today, setToday] = useState(todayAsDate);
   const selectedUserId = pickedUserId ?? userIds[0] ?? '';
+  // Until the user picks a date, the scoring window ends today.
+  const scoringWindowEndDate = pickedEndDate ?? today;
+
+  // Reads the date again each time the app is opened, so it is right after midnight.
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state === 'active') setToday(todayAsDate());
+    });
+    return () => subscription.remove();
+  }, []);
 
   const selection = useMemo(
     () => ({
