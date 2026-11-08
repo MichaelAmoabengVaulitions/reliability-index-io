@@ -1,6 +1,6 @@
 import {
   describeScoringWindow,
-  formatDateForField,
+  formatDate,
   monthLabelsInScoringWindow,
   scoringWindowDates,
   todayAsDate,
@@ -41,9 +41,9 @@ describe('monthLabelsInScoringWindow', () => {
   });
 });
 
-describe('formatDateForField', () => {
-  it('shows a date the way the date field does', () => {
-    expect(formatDateForField('2026-10-31')).toBe('10/31/2026');
+describe('formatDate', () => {
+  it('shows the year, the same way the scoring window does', () => {
+    expect(formatDate('2026-10-01')).toBe('Oct 1, 2026');
   });
 });
 

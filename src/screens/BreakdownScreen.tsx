@@ -1,6 +1,8 @@
 import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/components/AppText';
+import { ErrorState } from '@/components/ErrorState';
+import { LoadingState } from '@/components/LoadingState';
 import { ScreenContainer } from '@/components/ScreenContainer';
 import { SelectionHeader } from '@/components/SelectionHeader';
 import { ThinBar } from '@/components/ThinBar';
@@ -9,9 +11,6 @@ import type { ReliabilityScore } from '@/domain/score';
 import { buildBreakdownSteps } from '@/domain/scoreBreakdown';
 import { useSelection } from '@/selection/SelectionContext';
 import { colors, fontSizes, layout } from '@/theme';
-
-import { ErrorState } from './ErrorState';
-import { LoadingState } from './LoadingState';
 
 export function BreakdownScreen() {
   const { selectedUserId, scoringWindowEndDate } = useSelection();
@@ -31,7 +30,11 @@ function BreakdownContent({ score }: { score: ReliabilityScore }) {
     <ScrollView>
       <SelectionHeader />
 
-      <View style={styles.heading}>
+      <View
+        accessible
+        accessibilityLabel={`How the score was reached, ${score.score}`}
+        style={styles.heading}
+      >
         <AppText color={colors.secondaryText}>How the score was reached</AppText>
         <AppText size={fontSizes.mainNumber} style={styles.mainNumber}>
           {score.score}
@@ -40,7 +43,12 @@ function BreakdownContent({ score }: { score: ReliabilityScore }) {
 
       <View style={styles.steps}>
         {buildBreakdownSteps(score).map((step) => (
-          <View key={step.name} style={styles.step}>
+          <View
+            key={step.name}
+            accessible
+            accessibilityLabel={[step.name, step.points, step.note].filter(Boolean).join(', ')}
+            style={styles.step}
+          >
             <View style={styles.stepTitleRow}>
               <AppText style={styles.stepName}>{step.name}</AppText>
               <AppText weight="medium">{step.points}</AppText>
@@ -56,7 +64,7 @@ function BreakdownContent({ score }: { score: ReliabilityScore }) {
             )}
           </View>
         ))}
-        <View style={styles.total}>
+        <View accessible accessibilityLabel={`Score, ${score.score}`} style={styles.total}>
           <AppText weight="medium">Score</AppText>
           <AppText weight="medium">{score.score}</AppText>
         </View>

@@ -56,6 +56,45 @@ describe('ScoreScreen', () => {
     ).toBeOnTheScreen();
   });
 
+  it('reads the score and its band to screen readers as one item', async () => {
+    await renderWithProviders(<ScoreScreen />);
+    expect(screen.getByLabelText('Score 90 out of 100, High reliability')).toBeOnTheScreen();
+  });
+
+  it('reads each key number together with its label', async () => {
+    await renderWithProviders(<ScoreScreen />);
+    expect(screen.getByLabelText('Income compared with bills, 3.29 times')).toBeOnTheScreen();
+  });
+
+  it('reads each helping and hurting line together with its points', async () => {
+    await renderWithProviders(<ScoreScreen />);
+    expect(screen.getByLabelText('Saves money regularly, +25')).toBeOnTheScreen();
+    expect(screen.getByLabelText('Essential bills paid regularly')).toBeOnTheScreen();
+  });
+
+  it('marks the section titles as headings', async () => {
+    await renderWithProviders(<ScoreScreen />);
+    expect(screen.getByRole('header', { name: 'What is helping' })).toBeOnTheScreen();
+    expect(screen.getByRole('header', { name: 'What is hurting' })).toBeOnTheScreen();
+  });
+
+  it('marks the current user as selected in the user sheet', async () => {
+    await renderWithProviders(<ScoreScreen />);
+    await fireEvent.press(screen.getByLabelText(/Switch user/));
+
+    expect(screen.getByRole('button', { name: 'user_1009', selected: true })).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'user_1005', selected: false })).toBeOnTheScreen();
+  });
+
+  it('closes a sheet with the screen reader escape gesture', async () => {
+    await renderWithProviders(<ScoreScreen />);
+    await fireEvent.press(screen.getByLabelText(/Switch user/));
+
+    await fireEvent(screen.getByText('Choose a user'), 'accessibilityEscape');
+
+    expect(screen.queryByText('Choose a user')).not.toBeOnTheScreen();
+  });
+
   it('opens Breakdown from the link', async () => {
     await renderWithProviders(<ScoreScreen />);
     await fireEvent.press(screen.getByText('See how this score was reached'));
@@ -75,7 +114,7 @@ describe('ScoreScreen', () => {
   it('closes a sheet when the backdrop is pressed', async () => {
     await renderWithProviders(<ScoreScreen />);
     await fireEvent.press(screen.getByLabelText(/Switch user/));
-    await fireEvent.press(screen.getByLabelText('Close'));
+    await fireEvent.press(screen.getByRole('button', { name: 'Close' }));
     expect(screen.queryByText('Choose a user')).not.toBeOnTheScreen();
   });
 
@@ -83,7 +122,7 @@ describe('ScoreScreen', () => {
     await renderWithProviders(<ScoreScreen />);
     await fireEvent.press(screen.getByLabelText(/Change scoring window/));
 
-    expect(screen.getByText('Scoring window')).toBeOnTheScreen();
+    expect(screen.getByRole('header', { name: 'Scoring window' })).toBeOnTheScreen();
     expect(
       screen.getByText('Pick an end date. The score uses the 6 months up to that date.'),
     ).toBeOnTheScreen();

@@ -1,8 +1,9 @@
 import { StyleSheet, View } from 'react-native';
 
-import { AppText } from '@/components/AppText';
-import { PrimaryButton } from '@/components/PrimaryButton';
 import { colors, fontSizes, layout } from '@/theme';
+
+import { AppText } from './AppText';
+import { PrimaryButton } from './PrimaryButton';
 
 interface ErrorStateProps {
   onRetry: () => void;

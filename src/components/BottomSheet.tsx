@@ -19,8 +19,17 @@ export function BottomSheet({ title, onClose, children, style }: BottomSheetProp
   return (
     <Modal transparent visible onRequestClose={onClose}>
       <View style={styles.screen}>
-        <Pressable accessibilityLabel="Close" onPress={onClose} style={styles.backdrop} />
-        <View style={[styles.sheet, { paddingBottom: bottomInset }, style]}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Close"
+          onPress={onClose}
+          style={styles.backdrop}
+        />
+        {/* The escape gesture is the screen reader's way to close, with two fingers on iOS. */}
+        <View
+          onAccessibilityEscape={onClose}
+          style={[styles.sheet, { paddingBottom: bottomInset }, style]}
+        >
           <AppText size={fontSizes.sheetHeading} weight="medium" accessibilityRole="header">
             {title}
           </AppText>

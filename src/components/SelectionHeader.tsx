@@ -1,13 +1,12 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { describeScoringWindow } from '@/domain/scoringWindow';
 import { useSelection } from '@/selection/SelectionContext';
-import { colors, fontSizes, layout } from '@/theme';
+import { fontSizes, layout } from '@/theme';
 
-import { AppText } from './AppText';
-import { ChevronIcon } from './ChevronIcon';
 import { ScoringWindowSheet } from './ScoringWindowSheet';
+import { Selector } from './Selector';
 import { UserSheet } from './UserSheet';
 
 // The user and scoring window buttons at the top of every tab.
@@ -19,24 +18,20 @@ export function SelectionHeader() {
 
   return (
     <View style={styles.header}>
-      <Pressable
-        accessibilityRole="button"
+      <Selector
+        label="User"
+        value={selectedUserId}
+        valueWeight="medium"
         accessibilityLabel={`Switch user, current ${selectedUserId}`}
         onPress={() => setOpenSheet('user')}
-        style={styles.button}
-      >
-        <AppText weight="medium">{selectedUserId}</AppText>
-        <ChevronIcon direction="down" />
-      </Pressable>
-      <Pressable
-        accessibilityRole="button"
+      />
+      <Selector
+        label="Scoring window"
+        value={scoringWindow.shortLabel}
+        valueSize={fontSizes.secondary}
         accessibilityLabel={`Change scoring window, currently ${scoringWindow.longLabel}`}
         onPress={() => setOpenSheet('scoringWindow')}
-        style={styles.button}
-      >
-        <AppText size={fontSizes.secondary}>{scoringWindow.shortLabel}</AppText>
-        <ChevronIcon direction="down" />
-      </Pressable>
+      />
 
       {openSheet === 'user' && <UserSheet onClose={closeSheet} />}
       {openSheet === 'scoringWindow' && <ScoringWindowSheet onClose={closeSheet} />}
@@ -48,17 +43,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
     paddingTop: 12,
     paddingHorizontal: layout.screenPadding,
-  },
-  button: {
-    height: layout.controlHeight,
-    paddingHorizontal: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    borderRadius: layout.controlRadius,
-    backgroundColor: colors.controlBackground,
   },
 });

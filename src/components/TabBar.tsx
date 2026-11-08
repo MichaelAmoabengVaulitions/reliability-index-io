@@ -24,7 +24,7 @@ export function TabBar({ state, navigateToTab }: TabBarProps) {
   const bottomSpace = Math.max(bottomInset, layout.tabBarMinimumBottomSpace);
 
   return (
-    <View style={[styles.bar, { height: layout.tabBarContentHeight + bottomSpace }]}>
+    <View style={[styles.bar, { minHeight: layout.tabBarContentHeight + bottomSpace }]}>
       {state.routes.map((route, position) => {
         const isActive = position === state.index;
         const inkColor = isActive ? colors.tabSelected : colors.secondaryText;
@@ -65,5 +65,5 @@ const styles = StyleSheet.create({
     borderTopColor: colors.divider,
     backgroundColor: colors.background,
   },
-  tab: { flex: 1, height: 48, alignItems: 'center', justifyContent: 'center', gap: 4 },
+  tab: { flex: 1, minHeight: 48, alignItems: 'center', justifyContent: 'center', gap: 4 },
 });

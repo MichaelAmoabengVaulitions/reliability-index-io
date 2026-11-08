@@ -64,9 +64,10 @@ export function monthLabelsInScoringWindow(endDate: string): string[] {
   return monthsInScoringWindow;
 }
 
-export function formatDateForField(date: string): string {
-  const [year, month, day] = date.split('-');
-  return `${month}/${day}/${year}`;
+// Written the same way as the scoring window, so dates match everywhere.
+export function formatDate(date: string): string {
+  const { year, monthIndex, day } = readDate(date);
+  return `${monthNames[monthIndex]} ${day}, ${year}`;
 }
 
 // The dates to ask the backend for: the first day of the window up to the end date.
@@ -80,11 +81,6 @@ export function scoringWindowDates(endDate: string) {
 export function formatMonthOfDate(date: string): string {
   const { year, monthIndex } = readDate(date);
   return `${monthNames[monthIndex]} ${year}`;
-}
-
-export function formatDateForRow(date: string): string {
-  const { monthIndex, day } = readDate(date);
-  return `${monthNames[monthIndex]} ${day}`;
 }
 
 // The date picker works with local dates, so these stay in local time on purpose.
