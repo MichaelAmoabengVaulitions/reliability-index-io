@@ -1,4 +1,5 @@
-import type { Transaction } from '@/api/schemas';
+import type { Transaction } from '@reliability-index/core/api/schemas';
+
 import { formatMonth, monthKey, parseISODate } from '@/domain/dates';
 
 export interface MonthlyCashflow {

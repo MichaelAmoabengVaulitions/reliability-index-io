@@ -1,4 +1,4 @@
-import type { MerchantCategory } from '@/api/schemas';
+import type { MerchantCategory } from '@reliability-index/core/api/schemas';
 
 /**
  * Returns the backend's name for a merchant category code. While the names

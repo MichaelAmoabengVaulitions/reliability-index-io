@@ -6,7 +6,7 @@ import {
   fetchMerchantCategories,
   fetchReliability,
 } from '@/api/client';
-import type { Transaction } from '@/api/schemas';
+import type { Transaction } from '@reliability-index/core/api/schemas';
 import { toReliabilityScore } from '@/domain/reliabilityScoreMapping';
 import { scoringWindowDates } from '@/domain/scoringWindow';
 import { applyTransactionEvents, type LiveEvent } from '@/domain/transactionEvents';

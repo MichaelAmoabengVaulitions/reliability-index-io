@@ -13,6 +13,6 @@
   "scripts": {
     "web": "yarn workspace reliability-index-explorer dev",
     "mobile": "yarn workspace reliability-index-mobile start",
-    "check": "yarn workspace reliability-index-explorer run check && yarn workspace reliability-index-mobile run check"
+    "check": "yarn workspace @reliability-index/core run check && yarn workspace reliability-index-explorer run check && yarn workspace reliability-index-mobile run check"
   }
 }

@@ -1,4 +1,4 @@
-import type { ReliabilityResponse } from '@/api/schemas';
+import type { ReliabilityResponse } from '@reliability-index/core/api/schemas';
 
 import { parseDriver, type ParsedDriver } from './drivers';
 import type { BillPayment, ReliabilityScore, ScoreBand } from './score';

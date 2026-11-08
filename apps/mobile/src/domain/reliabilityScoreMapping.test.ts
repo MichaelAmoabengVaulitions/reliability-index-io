@@ -1,4 +1,4 @@
-import type { ReliabilityResponse } from '@/api/schemas';
+import type { ReliabilityResponse } from '@reliability-index/core/api/schemas';
 
 import { toReliabilityScore } from './reliabilityScoreMapping';
 

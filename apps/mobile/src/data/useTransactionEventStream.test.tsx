@@ -2,7 +2,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook } from '@testing-library/react-native';
 import type { ReactNode } from 'react';
 
-import type { Transaction } from '@/api/schemas';
+import type { Transaction } from '@reliability-index/core/api/schemas';
 import { createTestQueryClient } from '@/test-utils/createTestQueryClient';
 import { FakeEventSource } from '@/test-utils/fakeEventSource';
 import { sampleScores } from '@/test-utils/sampleScores';

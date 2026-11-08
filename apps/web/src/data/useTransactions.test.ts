@@ -1,7 +1,7 @@
+import type { TransactionEvent } from '@reliability-index/core/api/schemas';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import type { TransactionEvent } from '@/api/schemas';
 import { buildTransaction } from '@/test-utils/fixtures/transactions';
 import { createQueryClientAndWrapper, createQueryWrapper } from '@/test-utils/queryWrapper';
 

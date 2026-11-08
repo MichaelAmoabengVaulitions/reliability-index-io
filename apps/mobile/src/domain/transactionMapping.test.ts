@@ -1,4 +1,4 @@
-import type { Transaction as ApiTransaction } from '@/api/schemas';
+import type { Transaction as ApiTransaction } from '@reliability-index/core/api/schemas';
 
 import { toTransactions } from './transactionMapping';
 

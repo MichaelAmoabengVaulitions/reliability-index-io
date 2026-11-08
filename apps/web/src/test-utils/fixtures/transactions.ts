@@ -1,4 +1,4 @@
-import type { Transaction } from '@/api/schemas';
+import type { Transaction } from '@reliability-index/core/api/schemas';
 
 /*
  * Returns a single transaction, starting from a fixed set of fields and

@@ -1,4 +1,4 @@
-import type { TransactionEvent } from '@/api/schemas';
+import type { TransactionEvent } from '@reliability-index/core/api/schemas';
 
 type Listener = (event: unknown) => void;
 

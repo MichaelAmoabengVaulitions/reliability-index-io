@@ -1,4 +1,4 @@
-import type { ReliabilityResponse, ScoringMetrics } from '@/api/schemas';
+import type { ReliabilityResponse, ScoringMetrics } from '@reliability-index/core/api/schemas';
 
 interface ReliabilityOverrides {
   /** Fields to replace on the response itself. */
