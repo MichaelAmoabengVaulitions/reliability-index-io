@@ -1,13 +1,8 @@
+import { EARLIEST_SCORING_DATE, todayInUtc } from '@reliability-index/core/scoring/window';
 import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { Platform, Pressable, StyleSheet } from 'react-native';
 
-import {
-  earliestScoringDate,
-  formatDate,
-  fromPickerDate,
-  todayAsDate,
-  toPickerDate,
-} from '@/domain/scoringWindow';
+import { formatDate, fromPickerDate, toPickerDate } from '@/domain/scoringWindow';
 import { colors, layout } from '@/theme';
 
 import { AppText } from './AppText';
@@ -26,8 +21,8 @@ export function DateField({ date, onDateChange }: DateFieldProps) {
   const pickerOptions = {
     mode: 'date' as const,
     value: toPickerDate(date),
-    minimumDate: toPickerDate(earliestScoringDate),
-    maximumDate: toPickerDate(todayAsDate()),
+    minimumDate: toPickerDate(EARLIEST_SCORING_DATE),
+    maximumDate: toPickerDate(todayInUtc()),
     onValueChange: (_event: unknown, pickedDate: Date) => onDateChange(fromPickerDate(pickedDate)),
   };
 

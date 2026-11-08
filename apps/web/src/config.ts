@@ -8,13 +8,6 @@ export const config = {
     baseUrl: 'https://wydokyegph.execute-api.eu-central-1.amazonaws.com',
     transactionPageLimit: 500,
     requestTimeoutMs: 20_000,
-    scoringWindowMonths: 6,
-    /*
-     * The first month-end with six full months of data behind it. The data
-     * starts in September 2025, so an earlier date would score a part-empty
-     * window and look low only because months are missing.
-     */
-    earliestScoringDate: '2026-02-28',
     /*
      * The only user id the API specification gives as an example. The user
      * picker falls back to this list when the discovery endpoint returns
@@ -39,14 +32,11 @@ export const config = {
     gcTimeMs: 300_000,
     retryCount: 2,
   },
+  /*
+   * The scoring window and the score band limits are shared with the mobile
+   * app, in @reliability-index/core/scoring.
+   */
   scoring: {
-    /*
-     * Score band ranges from the API specification: LOW 0-49, MEDIUM 50-74,
-     * HIGH 75-100. The score scale uses these so its coloured zones line
-     * up with the band the backend reports.
-     */
-    mediumBandMin: 50,
-    highBandMin: 75,
     resilienceMinPoints: -20,
     resilienceMaxPoints: 25,
   },

@@ -40,10 +40,13 @@ to be called with `yarn run check`, both here and inside each app.
 - Both apps use React 19.3.0.
 - Shared code is in `packages/core`. The apps import it by file, for example
   `@reliability-index/core/api/schemas`. It is TypeScript source with no build
-  step: Vite and Metro compile it along with each app. It holds the API
-  schemas and the API client so far, and owns the `zod` dependency for both
-  apps. Each app passes its own settings to the client, such as which host to
-  call.
+  step: Vite and Metro compile it along with each app. It owns the `zod`
+  dependency for both apps. So far it holds:
+  - `api`: the API schemas and client. Each app passes its own settings to the
+    client, such as which host to call.
+  - `scoring`: the scoring window dates, the score band limits and reading the
+    points off a score reason.
+  - `live`: which live updates to apply.
 
 ## History
 

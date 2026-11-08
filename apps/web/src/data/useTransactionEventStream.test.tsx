@@ -1,3 +1,4 @@
+import type { LiveEvent } from '@reliability-index/core/live/transactionEvents';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { type ReactNode } from 'react';
@@ -9,7 +10,7 @@ import { buildTransaction } from '@/test-utils/fixtures/transactions';
 
 import type { TransactionsQueryData } from './queries';
 import { queryKeys } from './queryKeys';
-import { toState, type LiveEvent, type TransactionState } from './transactionState';
+import { toState, type TransactionState } from './transactionState';
 import { useTransactionEventStream } from './useTransactionEventStream';
 
 interface SimpleListener {

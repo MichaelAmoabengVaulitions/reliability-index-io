@@ -1,4 +1,10 @@
 import { transactionEventSchema, type TransactionEvent } from '@reliability-index/core/api/schemas';
+import {
+  fitEventToWindow,
+  onlyChangingEvents,
+  onlyNewEvents,
+  type LiveEvent,
+} from '@reliability-index/core/live/transactionEvents';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 
@@ -7,13 +13,7 @@ import { config } from '@/config';
 
 import { discoveryQuery, type TransactionsQueryData } from './queries';
 import { queryKeys } from './queryKeys';
-import {
-  applyTransactionEvents,
-  fitEventToWindow,
-  onlyChangingEvents,
-  onlyNewEvents,
-  type LiveEvent,
-} from './transactionState';
+import { applyTransactionEvents } from './transactionState';
 
 /**
  * The connection state of the live updates stream.
@@ -129,7 +129,7 @@ export function useTransactionEventStream(userId: string, from: string, to: stri
       }
 
       const newEvents = onlyChangingEvents(
-        cached.state,
+        cached.state.allIds,
         onlyNewEvents(cached.liveEvents, pendingEvents),
       );
       pendingEvents = [];
@@ -169,7 +169,7 @@ export function useTransactionEventStream(userId: string, from: string, to: stri
         );
         return;
       }
-      const fittedEvent = fitEventToWindow(parsed.data, from, to);
+      const fittedEvent = fitEventToWindow(parsed.data, { start: from, end: to });
       if (fittedEvent === undefined) return;
 
       pendingEvents.push({ id: event.lastEventId, event: fittedEvent });

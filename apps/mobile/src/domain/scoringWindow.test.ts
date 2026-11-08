@@ -1,16 +1,4 @@
-import {
-  describeScoringWindow,
-  formatDate,
-  monthLabelsInScoringWindow,
-  scoringWindowDates,
-  todayAsDate,
-} from './scoringWindow';
-
-describe('scoringWindowDates', () => {
-  it('starts on the first day of the oldest month and ends on the end date', () => {
-    expect(scoringWindowDates('2026-02-20')).toEqual({ start: '2025-09-01', end: '2026-02-20' });
-  });
-});
+import { describeScoringWindow, formatDate, monthLabelsInScoringWindow } from './scoringWindow';
 
 describe('describeScoringWindow', () => {
   it('describes a window inside one year', () => {
@@ -44,14 +32,5 @@ describe('monthLabelsInScoringWindow', () => {
 describe('formatDate', () => {
   it('shows the year, the same way the scoring window does', () => {
     expect(formatDate('2026-10-01')).toBe('Oct 1, 2026');
-  });
-});
-
-describe('todayAsDate', () => {
-  afterEach(() => jest.useRealTimers());
-
-  it('uses the UTC date, as the backend does', () => {
-    jest.useFakeTimers({ now: new Date('2026-03-01T23:30:00-05:00') });
-    expect(todayAsDate()).toBe('2026-03-02');
   });
 });

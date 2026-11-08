@@ -1,8 +1,8 @@
+import { todayInUtc } from '@reliability-index/core/scoring/window';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 
-import { todayAsIsoDate } from '@/domain/dates';
 import { renderWithProviders } from '@/test-utils/renderWithProviders';
 
 import { useDashboardParams } from './useDashboardParams';
@@ -40,7 +40,7 @@ describe('useDashboardParams', () => {
   it('gives an empty user id and the default date when the URL has neither', () => {
     renderWithProviders(<Harness />);
     expect(screen.getByTestId('user')).toBeEmptyDOMElement();
-    expect(screen.getByTestId('from')).toHaveTextContent(todayAsIsoDate());
+    expect(screen.getByTestId('from')).toHaveTextContent(todayInUtc());
   });
 
   it('changes one filter and leaves the rest of the URL alone', async () => {

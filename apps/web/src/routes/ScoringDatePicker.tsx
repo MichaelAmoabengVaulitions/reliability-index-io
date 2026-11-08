@@ -1,9 +1,8 @@
+import { EARLIEST_SCORING_DATE, todayInUtc } from '@reliability-index/core/scoring/window';
 import { useState } from 'react';
 
-import { config } from '@/config';
 import { useDashboardParams } from '@/data/useDashboardParams';
 import { isSelectableDate } from '@/domain/dashboardParams';
-import { todayAsIsoDate } from '@/domain/dates';
 
 interface TypedDate {
   value: string;
@@ -36,8 +35,8 @@ export function ScoringDatePicker() {
       <input
         type="date"
         value={shownDate}
-        min={config.api.earliestScoringDate}
-        max={todayAsIsoDate()}
+        min={EARLIEST_SCORING_DATE}
+        max={todayInUtc()}
         onChange={(event) => changeDate(event.target.value)}
         onBlur={() => setTypedDate(null)}
         className="rounded-md border border-topbar-border bg-topbar-hover px-2 py-1 text-sm text-white [color-scheme:dark]"

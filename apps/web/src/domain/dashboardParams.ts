@@ -1,6 +1,8 @@
-import { config } from '@/config';
-
-import { isIsoDate, todayAsIsoDate } from './dates';
+import {
+  EARLIEST_SCORING_DATE,
+  isIsoDate,
+  todayInUtc,
+} from '@reliability-index/core/scoring/window';
 
 export type TransactionSign = 'all' | 'inflow' | 'outflow';
 export type SortField = 'date' | 'amount' | 'merchant_name';
@@ -60,13 +62,13 @@ function setOrRemove(params: URLSearchParams, name: string, value: string): void
 }
 
 export function isSelectableDate(date: string): boolean {
-  return isIsoDate(date) && date >= config.api.earliestScoringDate && date <= todayAsIsoDate();
+  return isIsoDate(date) && date >= EARLIEST_SCORING_DATE && date <= todayInUtc();
 }
 
 // The end of the scoring window. Today is used when the URL has no usable date.
 export function readFrom(params: URLSearchParams): string {
   const from = params.get('from') ?? '';
-  return isSelectableDate(from) ? from : todayAsIsoDate();
+  return isSelectableDate(from) ? from : todayInUtc();
 }
 
 // An empty date takes it out of the URL, which goes back to today.

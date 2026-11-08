@@ -1,13 +1,21 @@
+import { HIGH_BAND_MIN, MEDIUM_BAND_MIN } from '@reliability-index/core/scoring/bands';
 import { StyleSheet, View } from 'react-native';
 
 import { colors, fontSizes } from '@/theme';
 
 import { AppText } from './AppText';
 
+// A small gap is left between the sections, so each band reads as its own block.
+const sectionGap = 0.5;
+
 const scaleSections = [
-  { label: 'Low', left: '0%', width: '49.5%' },
-  { label: 'Medium', left: '50%', width: '24.5%' },
-  { label: 'High', left: '75%', width: '25%' },
+  { label: 'Low', left: '0%', width: `${MEDIUM_BAND_MIN - sectionGap}%` },
+  {
+    label: 'Medium',
+    left: `${MEDIUM_BAND_MIN}%`,
+    width: `${HIGH_BAND_MIN - MEDIUM_BAND_MIN - sectionGap}%`,
+  },
+  { label: 'High', left: `${HIGH_BAND_MIN}%`, width: `${100 - HIGH_BAND_MIN}%` },
 ] as const;
 
 export function ScoreScale({ score }: { score: number }) {
@@ -15,7 +23,7 @@ export function ScoreScale({ score }: { score: number }) {
     <View
       accessible
       accessibilityRole="image"
-      accessibilityLabel={`Low is 0 to 49, Medium is 50 to 74, High is 75 to 100. This score is ${score}.`}
+      accessibilityLabel={`Low is 0 to ${MEDIUM_BAND_MIN - 1}, Medium is ${MEDIUM_BAND_MIN} to ${HIGH_BAND_MIN - 1}, High is ${HIGH_BAND_MIN} to 100. This score is ${score}.`}
       style={styles.scale}
     >
       {scaleSections.map((section) => (

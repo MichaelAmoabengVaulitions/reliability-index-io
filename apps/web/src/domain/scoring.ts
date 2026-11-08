@@ -1,3 +1,6 @@
+import { HIGH_BAND_MIN, MEDIUM_BAND_MIN } from '@reliability-index/core/scoring/bands';
+import { readDriverPoints } from '@reliability-index/core/scoring/drivers';
+
 import { config } from '@/config';
 
 export type DriverKind = 'positive' | 'risk' | 'neutral';
@@ -60,13 +63,6 @@ export interface ParsedDriver {
   kind: DriverKind;
 }
 
-/*
- * This pattern finds a points value like "(+5 pts)", "(-10 pts)" or
- * "(+2.5 pts)" at the very end of a driver string. It only matches at the end,
- * so a "(+5 pts)" in the middle of a sentence is left alone.
- */
-const POINTS_SUFFIX = /\s*\(([+-]?\d+(?:\.\d+)?)\s*pts\)\s*$/;
-
 const HELPING_WORDING = /strong income coverage|income covers essential|detected consistently/i;
 const HURTING_WORDING = /inconsistent|some gaps|no income/i;
 // A count like the "5/6" in "Income present in 5/6 months".
@@ -89,17 +85,15 @@ function kindFromWording(driver: string): DriverKind {
 
 /*
  * Splits a driver string from the API into its wording and an optional points
- * value. The points decide whether the driver counts as positive, a risk, or
- * neutral, and the wording decides when there are no points, so the UI can
- * show it under the right column.
+ * value (read by the shared readDriverPoints). The points decide whether the
+ * driver counts as positive, a risk, or neutral, and the wording decides when
+ * there are no points, so the UI can show it under the right column.
  */
 export function parseDriver(raw: string): ParsedDriver {
-  const match = raw.match(POINTS_SUFFIX);
-  if (match === null) {
-    return { raw, label: raw.trim(), kind: kindFromWording(raw) };
+  const { label, points } = readDriverPoints(raw);
+  if (points === undefined) {
+    return { raw, label, kind: kindFromWording(raw) };
   }
-  const points = Number(match[1]);
-  const label = raw.replace(POINTS_SUFFIX, '').trim();
   if (points === 0) {
     return { raw, label, points: 0, kind: 'neutral' };
   }
@@ -122,14 +116,13 @@ function countOfPoints(points: number): string {
 
 // Says how far a score is from a band edge. A medium score has two edges, so it uses the nearer one.
 export function bandEdgeNote(score: number): string {
-  const { mediumBandMin, highBandMin } = config.scoring;
-  if (score === highBandMin) return 'Right on the High cutoff';
-  if (score === mediumBandMin) return 'Right on the Medium cutoff';
-  if (score > highBandMin) return `${countOfPoints(score - highBandMin)} above the High cutoff`;
-  if (score < mediumBandMin) return `${countOfPoints(mediumBandMin - score)} below Medium`;
+  if (score === HIGH_BAND_MIN) return 'Right on the High cutoff';
+  if (score === MEDIUM_BAND_MIN) return 'Right on the Medium cutoff';
+  if (score > HIGH_BAND_MIN) return `${countOfPoints(score - HIGH_BAND_MIN)} above the High cutoff`;
+  if (score < MEDIUM_BAND_MIN) return `${countOfPoints(MEDIUM_BAND_MIN - score)} below Medium`;
 
-  const pointsToHigh = highBandMin - score;
-  const pointsAboveLow = score - mediumBandMin;
+  const pointsToHigh = HIGH_BAND_MIN - score;
+  const pointsAboveLow = score - MEDIUM_BAND_MIN;
   return pointsToHigh <= pointsAboveLow
     ? `${countOfPoints(pointsToHigh)} below High`
     : `${countOfPoints(pointsAboveLow)} above Low`;

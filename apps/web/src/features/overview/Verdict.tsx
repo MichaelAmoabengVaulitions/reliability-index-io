@@ -1,9 +1,10 @@
 import type { ReliabilityResponse } from '@reliability-index/core/api/schemas';
+import { HIGH_BAND_MIN, MEDIUM_BAND_MIN } from '@reliability-index/core/scoring/bands';
+import { scoringWindowFor } from '@reliability-index/core/scoring/window';
 
-import { config } from '@/config';
 import { useDashboardParams } from '@/data/useDashboardParams';
 import { useReliability } from '@/data/useReliability';
-import { formatMonth, parseISODate, windowFor } from '@/domain/dates';
+import { formatMonth, parseISODate } from '@/domain/dates';
 import { bandEdgeNote } from '@/domain/scoring';
 import { Card } from '@/ui/Card';
 import { ErrorState } from '@/ui/ErrorState';
@@ -11,7 +12,6 @@ import { Skeleton } from '@/ui/Skeleton';
 
 const CARD_TITLE = 'Reliability score';
 const MAX_SCORE = 100;
-const { mediumBandMin, highBandMin } = config.scoring;
 
 const BAND_STYLES: Record<ReliabilityResponse['score_band'], { score: string; chip: string }> = {
   LOW: { score: 'text-negative', chip: 'bg-negative-soft text-negative-strong' },
@@ -23,11 +23,11 @@ function ScoreScale({ score }: { score: number }) {
   return (
     <div role="img" aria-label={`Score ${score} on a scale of 0 to ${MAX_SCORE}`}>
       <div className="relative flex h-3 gap-0.5">
-        <div className="rounded-l-md bg-negative-border" style={{ flexGrow: mediumBandMin }} />
-        <div className="bg-warning-dot" style={{ flexGrow: highBandMin - mediumBandMin }} />
+        <div className="rounded-l-md bg-negative-border" style={{ flexGrow: MEDIUM_BAND_MIN }} />
+        <div className="bg-warning-dot" style={{ flexGrow: HIGH_BAND_MIN - MEDIUM_BAND_MIN }} />
         <div
           className="rounded-r-md bg-positive-dot"
-          style={{ flexGrow: MAX_SCORE - highBandMin }}
+          style={{ flexGrow: MAX_SCORE - HIGH_BAND_MIN }}
         />
         <div
           data-testid="score-marker"
@@ -37,11 +37,11 @@ function ScoreScale({ score }: { score: number }) {
       </div>
       <div className="relative mt-2 h-4 text-xs text-slate-600" aria-hidden="true">
         <span className="absolute left-0">0</span>
-        <span className="absolute" style={{ left: `${mediumBandMin}%` }}>
-          {mediumBandMin}
+        <span className="absolute" style={{ left: `${MEDIUM_BAND_MIN}%` }}>
+          {MEDIUM_BAND_MIN}
         </span>
-        <span className="absolute" style={{ left: `${highBandMin}%` }}>
-          {highBandMin}
+        <span className="absolute" style={{ left: `${HIGH_BAND_MIN}%` }}>
+          {HIGH_BAND_MIN}
         </span>
         <span className="absolute right-0">{MAX_SCORE}</span>
       </div>
@@ -87,7 +87,7 @@ export function Verdict() {
   }
 
   const { reliability_index: score, score_band: band, currency } = response;
-  const scoringWindow = windowFor(from);
+  const scoringWindow = scoringWindowFor(from);
   const windowLabel = `${formatMonth(parseISODate(scoringWindow.start))} to ${formatMonth(parseISODate(scoringWindow.end))}`;
 
   return (
