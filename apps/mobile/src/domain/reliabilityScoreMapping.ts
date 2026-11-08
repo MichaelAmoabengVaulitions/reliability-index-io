@@ -2,7 +2,7 @@ import type { ReliabilityResponse } from '@reliability-index/core/api/schemas';
 
 import { parseDriver, type ParsedDriver } from './drivers';
 import type { BillPayment, ReliabilityScore, ScoreBand } from './score';
-import { scoringWindowMonths } from './scoringWindow';
+import { SCORING_WINDOW_MONTHS } from '@reliability-index/core/scoring/window';
 
 const bandNames: Record<ReliabilityResponse['score_band'], ScoreBand> = {
   LOW: 'Low',
@@ -59,7 +59,7 @@ export function toReliabilityScore(response: ReliabilityResponse): ReliabilitySc
     userId: response.user_id,
     score: response.reliability_index,
     band: bandNames[response.score_band],
-    monthsWithIncome: Math.round(metrics.income_regularity * scoringWindowMonths),
+    monthsWithIncome: Math.round(metrics.income_regularity * SCORING_WINDOW_MONTHS),
     incomeComparedWithBills: metrics.income_coverage_ratio,
     essentialBillsPaidPercent: Math.round(metrics.essential_payments_consistency * 100),
     billPayment: readBillPayment(drivers),

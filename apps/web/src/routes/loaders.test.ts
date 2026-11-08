@@ -1,9 +1,9 @@
+import { todayInUtc } from '@reliability-index/core/scoring/window';
 import { QueryClient } from '@tanstack/react-query';
 import { waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { queryKeys } from '@/data/queryKeys';
-import { todayAsIsoDate } from '@/domain/dates';
 
 import { dashboardLoader, rootLoader, shouldReloadDashboard } from './loaders';
 
@@ -70,7 +70,7 @@ describe('dashboardLoader', () => {
 
     await waitFor(() => {
       expect(
-        queryClient.getQueryData(queryKeys.reliability('user_1001', todayAsIsoDate())),
+        queryClient.getQueryData(queryKeys.reliability('user_1001', todayInUtc())),
       ).toBeDefined();
     });
   });

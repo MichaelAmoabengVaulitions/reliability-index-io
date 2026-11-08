@@ -1,5 +1,5 @@
 import { minusSign, type ReliabilityScore } from './score';
-import { scoringWindowMonths } from './scoringWindow';
+import { SCORING_WINDOW_MONTHS } from '@reliability-index/core/scoring/window';
 
 export interface KeyNumber {
   label: string;
@@ -38,7 +38,7 @@ export function buildKeyNumbers(score: ReliabilityScore): KeyNumber[] {
   return [
     {
       label: 'Months with income',
-      value: `${score.monthsWithIncome} of ${scoringWindowMonths}`,
+      value: `${score.monthsWithIncome} of ${SCORING_WINDOW_MONTHS}`,
     },
     {
       label: 'Income compared with bills',
@@ -50,7 +50,7 @@ export function buildKeyNumbers(score: ReliabilityScore): KeyNumber[] {
     },
     {
       label: 'Good months',
-      value: `${score.goodMonths} of ${scoringWindowMonths}`,
+      value: `${score.goodMonths} of ${SCORING_WINDOW_MONTHS}`,
     },
     { label: 'Late fees', value: `${score.lateFees}` },
     { label: 'Estimated days below zero', value: `${score.daysBelowZero}` },
@@ -65,7 +65,7 @@ export function buildScoreGroups(score: ReliabilityScore): ScoreGroup[] {
 
   add(
     score.monthsWithIncome >= helpingMonthsMinimum ? helping : hurting,
-    `Income arrived in ${score.monthsWithIncome} of ${scoringWindowMonths} months`,
+    `Income arrived in ${score.monthsWithIncome} of ${SCORING_WINDOW_MONTHS} months`,
   );
 
   const comparison = score.incomeComparedWithBills;
@@ -102,7 +102,7 @@ export function buildScoreGroups(score: ReliabilityScore): ScoreGroup[] {
 
   add(
     score.goodMonths >= helpingMonthsMinimum ? helping : hurting,
-    `Good months: ${score.goodMonths} of ${scoringWindowMonths}`,
+    `Good months: ${score.goodMonths} of ${SCORING_WINDOW_MONTHS}`,
   );
 
   for (const driver of score.otherDrivers) {

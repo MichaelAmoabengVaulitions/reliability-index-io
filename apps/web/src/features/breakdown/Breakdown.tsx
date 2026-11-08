@@ -1,6 +1,6 @@
+import { SCORING_WINDOW_MONTHS } from '@reliability-index/core/scoring/window';
 import type { ReactNode } from 'react';
 
-import { config } from '@/config';
 import { useDashboardParams } from '@/data/useDashboardParams';
 import { useReliability } from '@/data/useReliability';
 import {
@@ -160,7 +160,7 @@ export function Breakdown() {
         capLabel={SIGNAL_CAP_LABELS.resilience}
         extraRow={{
           label: 'Good months',
-          value: `${metrics.good_months} / ${config.api.scoringWindowMonths}`,
+          value: `${metrics.good_months} / ${SCORING_WINDOW_MONTHS}`,
         }}
       />
     </div>

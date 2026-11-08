@@ -1,3 +1,4 @@
+import { scoringWindowFor } from '@reliability-index/core/scoring/window';
 import type { QueryClient } from '@tanstack/react-query';
 import type { LoaderFunctionArgs, ShouldRevalidateFunctionArgs } from 'react-router';
 
@@ -8,7 +9,6 @@ import {
   transactionsQuery,
 } from '@/data/queries';
 import { readFrom } from '@/domain/dashboardParams';
-import { windowFor } from '@/domain/dates';
 
 /*
  * The loaders start the fetches but don't wait for them. The page opens
@@ -29,7 +29,7 @@ export function dashboardLoader(queryClient: QueryClient) {
     if (userId === undefined) return null;
 
     const from = readFrom(new URL(request.url).searchParams);
-    const { start, end } = windowFor(from);
+    const { start, end } = scoringWindowFor(from);
     void queryClient.prefetchQuery(reliabilityQuery(userId, from));
     void queryClient.prefetchQuery(transactionsQuery(userId, start, end));
     return null;

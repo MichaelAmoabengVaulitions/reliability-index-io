@@ -52,67 +52,11 @@ export function applyTransactionEvents(
   return { byId, allIds: [...allIds].filter((id) => id in byId) };
 }
 
-/** A live event together with the id the stream sent it with. */
-export interface LiveEvent {
-  id: string;
-  event: TransactionEvent;
-}
-
 /*
- * The stream replays the same events each time it reconnects, so anything
- * with an id we've already applied is left out.
+ * The rules for which live events to apply (replays, changes that do nothing,
+ * the scoring window) are shared, in @reliability-index/core/live/transactionEvents.
+ * Applying them stays here because this app stores transactions as byId and allIds.
  */
-export function onlyNewEvents(
-  knownEvents: readonly LiveEvent[],
-  incomingEvents: readonly LiveEvent[],
-): LiveEvent[] {
-  const seenIds = new Set(knownEvents.map((liveEvent) => liveEvent.id));
-  return incomingEvents.filter((liveEvent) => {
-    if (seenIds.has(liveEvent.id)) return false;
-    seenIds.add(liveEvent.id);
-    return true;
-  });
-}
-
-/*
- * Leaves out events that wouldn't change anything, like a delete of a row we
- * don't have, so "N live updates" only counts what the analyst can see.
- */
-export function onlyChangingEvents(
-  state: TransactionState,
-  liveEvents: readonly LiveEvent[],
-): LiveEvent[] {
-  const knownIds = new Set(state.allIds);
-  return liveEvents.filter(({ event }) => {
-    if (event.type === 'TRANSACTION_DELETED') {
-      return event.transaction_id !== undefined && knownIds.delete(event.transaction_id);
-    }
-    if (event.transaction === undefined) return false;
-    knownIds.add(event.transaction.id);
-    return true;
-  });
-}
-
-/*
- * Returns the event to apply for a scoring window, or undefined if it should
- * be ignored. An update that moves a transaction out of the window becomes a
- * delete, because the old copy would otherwise stay in the list.
- */
-export function fitEventToWindow(
-  event: TransactionEvent,
-  from: string,
-  to: string,
-): TransactionEvent | undefined {
-  if (event.type === 'TRANSACTION_DELETED') return event;
-  if (event.transaction === undefined) return undefined;
-
-  const { id, date } = event.transaction;
-  if (date >= from && date <= to) return event;
-  if (event.type === 'TRANSACTION_UPDATED') {
-    return { type: 'TRANSACTION_DELETED', transaction_id: id };
-  }
-  return undefined;
-}
 
 function applyDeleted(state: TransactionState, idToRemove: string | undefined): TransactionState {
   if (idToRemove === undefined || !(idToRemove in state.byId)) {

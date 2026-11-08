@@ -5,14 +5,14 @@ import EventSource, { type CustomEvent } from 'react-native-sse';
 import { apiSettings } from '@/api/apiSettings';
 import { transactionEventsUrl } from '@/api/client';
 import { transactionEventSchema, type TransactionEvent } from '@reliability-index/core/api/schemas';
-import { scoringWindowDates } from '@/domain/scoringWindow';
+import { scoringWindowFor } from '@reliability-index/core/scoring/window';
 import {
-  applyTransactionEvents,
   fitEventToWindow,
   onlyChangingEvents,
   onlyNewEvents,
   type LiveEvent,
-} from '@/domain/transactionEvents';
+} from '@reliability-index/core/live/transactionEvents';
+import { applyTransactionEvents } from '@/domain/transactionEvents';
 
 import {
   discoveryQuery,
@@ -63,7 +63,7 @@ export function useTransactionEventStream(userId: string, endDate: string): bool
   useEffect(() => {
     if (streamBaseUrl === undefined || userId === '') return;
 
-    const scoringWindow = scoringWindowDates(endDate);
+    const scoringWindow = scoringWindowFor(endDate);
     const transactionsKey = transactionsQuery(userId, endDate).queryKey;
     const scoreKey = reliabilityQuery(userId, endDate).queryKey;
     let pendingEvents: LiveEvent[] = [];
@@ -82,7 +82,7 @@ export function useTransactionEventStream(userId: string, endDate: string): bool
       }
       batchTimer = undefined;
       const newEvents = onlyChangingEvents(
-        stored.transactions,
+        stored.transactions.map(({ id }) => id),
         onlyNewEvents(stored.liveEvents, pendingEvents),
       );
       pendingEvents = [];

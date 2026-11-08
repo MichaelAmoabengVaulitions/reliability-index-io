@@ -1,4 +1,5 @@
-import { config } from '@/config';
+import { SCORING_WINDOW_MONTHS } from '@reliability-index/core/scoring/window';
+
 import { useDashboardParams } from '@/data/useDashboardParams';
 import { useReliability } from '@/data/useReliability';
 import { formatCoverageRatio } from '@/domain/scoring';
@@ -105,7 +106,7 @@ export function Overview() {
         />
         <MetricTile
           label="Good months"
-          value={`${metrics.good_months} / ${config.api.scoringWindowMonths}`}
+          value={`${metrics.good_months} / ${SCORING_WINDOW_MONTHS}`}
           description={METRIC_DESCRIPTIONS.goodMonths}
         />
         <MetricTile

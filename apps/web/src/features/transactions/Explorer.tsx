@@ -1,10 +1,10 @@
+import { scoringWindowFor } from '@reliability-index/core/scoring/window';
 import { useMemo } from 'react';
 
 import { fromState } from '@/data/transactionState';
 import { useDashboardParams } from '@/data/useDashboardParams';
 import type { StreamState, StreamStatus } from '@/data/useTransactionEventStream';
 import { useTransactions } from '@/data/useTransactions';
-import { windowFor } from '@/domain/dates';
 import { Card } from '@/ui/Card';
 import { EmptyState } from '@/ui/EmptyState';
 import { ErrorState } from '@/ui/ErrorState';
@@ -55,7 +55,7 @@ function LiveBadge({ status }: { status: StreamStatus }) {
  */
 export function Explorer({ stream }: { stream: StreamState }) {
   const { userId, from, filters, resetFilters } = useDashboardParams();
-  const scoringWindow = windowFor(from);
+  const scoringWindow = scoringWindowFor(from);
   const transactions = useTransactions(userId, scoringWindow.start, scoringWindow.end);
 
   const allTransactions = useMemo(() => {

@@ -1,3 +1,4 @@
+import { scoringWindowFor } from '@reliability-index/core/scoring/window';
 import { useMemo } from 'react';
 import {
   Bar,
@@ -15,7 +16,6 @@ import { fromState } from '@/data/transactionState';
 import { useDashboardParams } from '@/data/useDashboardParams';
 import { useReliability } from '@/data/useReliability';
 import { useTransactions } from '@/data/useTransactions';
-import { windowFor } from '@/domain/dates';
 import { formatMoney } from '@/domain/money';
 import { colors } from '@/theme';
 import { Card } from '@/ui/Card';
@@ -81,7 +81,7 @@ function CashflowTooltip({
  */
 export function Cashflow() {
   const { userId, from } = useDashboardParams();
-  const scoringWindow = windowFor(from);
+  const scoringWindow = scoringWindowFor(from);
   const transactions = useTransactions(userId, scoringWindow.start, scoringWindow.end);
   const reliability = useReliability(userId, from);
 

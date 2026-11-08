@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 import { AppState } from 'react-native';
 
 import { discoveryQuery } from '@/data/queries';
-import { todayAsDate } from '@/domain/scoringWindow';
+import { todayInUtc } from '@reliability-index/core/scoring/window';
 
 interface Selection {
   userIds: readonly string[];
@@ -31,7 +31,7 @@ export function SelectionProvider({ children, initialEndDate }: SelectionProvide
   const [pickedEndDate, selectScoringWindowEndDate] = useState<string | null>(
     initialEndDate ?? null,
   );
-  const [today, setToday] = useState(todayAsDate);
+  const [today, setToday] = useState(todayInUtc);
   const selectedUserId = pickedUserId ?? userIds[0] ?? '';
   // Until the user picks a date, the scoring window ends today.
   const scoringWindowEndDate = pickedEndDate ?? today;
@@ -39,7 +39,7 @@ export function SelectionProvider({ children, initialEndDate }: SelectionProvide
   // Reads the date again each time the app is opened, so it is right after midnight.
   useEffect(() => {
     const subscription = AppState.addEventListener('change', (state) => {
-      if (state === 'active') setToday(todayAsDate());
+      if (state === 'active') setToday(todayInUtc());
     });
     return () => subscription.remove();
   }, []);

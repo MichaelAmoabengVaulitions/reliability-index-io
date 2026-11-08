@@ -1,6 +1,7 @@
+import { scoringWindowFor } from '@reliability-index/core/scoring/window';
+
 import { useDashboardParams } from '@/data/useDashboardParams';
 import { useTransactionEventStream } from '@/data/useTransactionEventStream';
-import { windowFor } from '@/domain/dates';
 import { Breakdown } from '@/features/breakdown/Breakdown';
 import { Cashflow } from '@/features/cashflow/Cashflow';
 import { Explanation } from '@/features/explanation/Explanation';
@@ -18,7 +19,7 @@ import { ErrorBoundary } from '@/ui/ErrorBoundary';
  */
 export function Dashboard() {
   const { userId, from } = useDashboardParams();
-  const scoringWindow = windowFor(from);
+  const scoringWindow = scoringWindowFor(from);
   // The stream sits here because it updates data shared by several cards.
   const stream = useTransactionEventStream(userId, scoringWindow.start, scoringWindow.end);
 

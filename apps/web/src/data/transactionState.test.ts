@@ -6,10 +6,7 @@ import { buildTransaction, buildTransactions } from '@/test-utils/fixtures/trans
 import {
   applyTransactionEvent,
   applyTransactionEvents,
-  fitEventToWindow,
   fromState,
-  onlyChangingEvents,
-  onlyNewEvents,
   toState,
 } from './transactionState';
 
@@ -151,110 +148,6 @@ describe('applyTransactionEvents', () => {
       { type: 'TRANSACTION_ADDED' },
     ]);
     expect(next.allIds).toEqual(['tx_1']);
-  });
-});
-
-describe('fitEventToWindow', () => {
-  const from = '2025-09-01';
-  const to = '2026-02-20';
-  const inside = buildTransaction({ id: 'tx_1', date: '2026-01-10' });
-  const outside = buildTransaction({ id: 'tx_1', date: '2026-03-01' });
-
-  it('keeps an event inside the window as it is', () => {
-    const event: TransactionEvent = { type: 'TRANSACTION_ADDED', transaction: inside };
-    expect(fitEventToWindow(event, from, to)).toBe(event);
-  });
-
-  it('counts the first and last days as inside the window', () => {
-    const firstDay = buildTransaction({ date: from });
-    const lastDay = buildTransaction({ date: to });
-    const added = 'TRANSACTION_ADDED';
-    expect(fitEventToWindow({ type: added, transaction: firstDay }, from, to)).toBeDefined();
-    expect(fitEventToWindow({ type: added, transaction: lastDay }, from, to)).toBeDefined();
-  });
-
-  it('drops a new transaction outside the window', () => {
-    const event: TransactionEvent = { type: 'TRANSACTION_ADDED', transaction: outside };
-    expect(fitEventToWindow(event, from, to)).toBeUndefined();
-  });
-
-  it('turns an update that moves a transaction out of the window into a delete', () => {
-    const event: TransactionEvent = { type: 'TRANSACTION_UPDATED', transaction: outside };
-    expect(fitEventToWindow(event, from, to)).toEqual({
-      type: 'TRANSACTION_DELETED',
-      transaction_id: 'tx_1',
-    });
-  });
-
-  it('keeps a delete, which has no date to check', () => {
-    const event: TransactionEvent = { type: 'TRANSACTION_DELETED', transaction_id: 'tx_1' };
-    expect(fitEventToWindow(event, from, to)).toBe(event);
-  });
-
-  it('drops an add or update with no transaction', () => {
-    expect(fitEventToWindow({ type: 'TRANSACTION_ADDED' }, from, to)).toBeUndefined();
-    expect(fitEventToWindow({ type: 'TRANSACTION_UPDATED' }, from, to)).toBeUndefined();
-  });
-});
-
-describe('onlyChangingEvents', () => {
-  const added = { id: '1', event: { type: 'TRANSACTION_ADDED', transaction: txTwo } } as const;
-  const deleted = {
-    id: '2',
-    event: { type: 'TRANSACTION_DELETED', transaction_id: 'tx_2' },
-  } as const;
-
-  it('keeps an add and an update', () => {
-    const updated = {
-      id: '3',
-      event: { type: 'TRANSACTION_UPDATED', transaction: txOne },
-    } as const;
-    expect(onlyChangingEvents(toState([txOne]), [added, updated])).toEqual([added, updated]);
-  });
-
-  it('keeps a delete of a row we have', () => {
-    expect(onlyChangingEvents(toState([txTwo]), [deleted])).toEqual([deleted]);
-  });
-
-  it('drops a delete of a row we do not have', () => {
-    expect(onlyChangingEvents(toState([txOne]), [deleted])).toEqual([]);
-  });
-
-  it('keeps a delete of a row added earlier in the same batch', () => {
-    expect(onlyChangingEvents(toState([]), [added, deleted])).toEqual([added, deleted]);
-  });
-
-  it('drops a delete that follows another delete of the same row', () => {
-    const repeat = { ...deleted, id: '3' };
-    expect(onlyChangingEvents(toState([txTwo]), [deleted, repeat])).toEqual([deleted]);
-  });
-
-  it('drops an event with nothing in it', () => {
-    const empty = { id: '4', event: { type: 'TRANSACTION_ADDED' } } as const;
-    const noId = { id: '5', event: { type: 'TRANSACTION_DELETED' } } as const;
-    expect(onlyChangingEvents(toState([txOne]), [empty, noId])).toEqual([]);
-  });
-});
-
-describe('onlyNewEvents', () => {
-  const addedEvent: TransactionEvent = { type: 'TRANSACTION_ADDED', transaction: txTwo };
-
-  it('keeps events it has not seen', () => {
-    const incoming = [{ id: '2', event: addedEvent }];
-    expect(onlyNewEvents([{ id: '1', event: addedEvent }], incoming)).toEqual(incoming);
-  });
-
-  it('drops events that were already applied', () => {
-    const known = [{ id: '1', event: addedEvent }];
-    expect(onlyNewEvents(known, [{ id: '1', event: addedEvent }])).toEqual([]);
-  });
-
-  it('drops a repeat inside the same batch', () => {
-    const incoming = [
-      { id: '1', event: addedEvent },
-      { id: '1', event: addedEvent },
-    ];
-    expect(onlyNewEvents([], incoming)).toHaveLength(1);
   });
 });
 

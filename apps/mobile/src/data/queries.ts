@@ -8,8 +8,9 @@ import {
 } from '@/api/client';
 import type { Transaction } from '@reliability-index/core/api/schemas';
 import { toReliabilityScore } from '@/domain/reliabilityScoreMapping';
-import { scoringWindowDates } from '@/domain/scoringWindow';
-import { applyTransactionEvents, type LiveEvent } from '@/domain/transactionEvents';
+import { scoringWindowFor } from '@reliability-index/core/scoring/window';
+import type { LiveEvent } from '@reliability-index/core/live/transactionEvents';
+import { applyTransactionEvents } from '@/domain/transactionEvents';
 
 /*
  * The fetched transactions with every live event applied, and the log of
@@ -41,7 +42,7 @@ export function reliabilityQuery(userId: string, endDate: string) {
 }
 
 export function transactionsQuery(userId: string, endDate: string) {
-  const { start, end } = scoringWindowDates(endDate);
+  const { start, end } = scoringWindowFor(endDate);
   const queryKey = ['reliability', 'transactions', userId, start, end];
   return queryOptions({
     queryKey,

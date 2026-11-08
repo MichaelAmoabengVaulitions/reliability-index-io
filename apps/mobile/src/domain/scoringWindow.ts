@@ -1,3 +1,5 @@
+import { SCORING_WINDOW_MONTHS } from '@reliability-index/core/scoring/window';
+
 const monthNames = [
   'Jan',
   'Feb',
@@ -13,8 +15,7 @@ const monthNames = [
   'Dec',
 ];
 
-export const earliestScoringDate = '2026-02-28';
-export const scoringWindowMonths = 6;
+// The scoring window, its earliest date and today's date are shared, in core/scoring/window.
 
 interface CalendarMonth {
   year: number;
@@ -30,8 +31,8 @@ function readDate(date: string) {
 // The end date's month counts as the last of the six months.
 function listMonthsInWindow(endDate: string): CalendarMonth[] {
   const { year, monthIndex } = readDate(endDate);
-  return Array.from({ length: scoringWindowMonths }, (_, position) => {
-    const monthsFromStart = monthIndex - (scoringWindowMonths - 1) + position;
+  return Array.from({ length: SCORING_WINDOW_MONTHS }, (_, position) => {
+    const monthsFromStart = monthIndex - (SCORING_WINDOW_MONTHS - 1) + position;
     const firstOfMonth = new Date(Date.UTC(year, monthsFromStart, 1));
     return {
       year: firstOfMonth.getUTCFullYear(),
@@ -70,13 +71,6 @@ export function formatDate(date: string): string {
   return `${monthNames[monthIndex]} ${day}, ${year}`;
 }
 
-// The dates to ask the backend for: the first day of the window up to the end date.
-export function scoringWindowDates(endDate: string) {
-  const [start] = listMonthsInWindow(endDate);
-  const startMonth = String(start.monthIndex + 1).padStart(2, '0');
-  return { start: `${start.year}-${startMonth}-01`, end: endDate };
-}
-
 // The month a date falls in, written the same way as the scoring window's months.
 export function formatMonthOfDate(date: string): string {
   const { year, monthIndex } = readDate(date);
@@ -93,9 +87,4 @@ export function fromPickerDate(date: Date): string {
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
   return `${date.getFullYear()}-${month}-${day}`;
-}
-
-// The backend works in UTC, so the viewer's time zone must not change the day.
-export function todayAsDate(): string {
-  return new Date().toISOString().slice(0, 10);
 }

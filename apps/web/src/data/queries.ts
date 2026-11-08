@@ -1,3 +1,4 @@
+import type { LiveEvent } from '@reliability-index/core/live/transactionEvents';
 import { queryOptions } from '@tanstack/react-query';
 
 import {
@@ -8,12 +9,7 @@ import {
 } from '@/api/client';
 
 import { queryKeys } from './queryKeys';
-import {
-  applyTransactionEvents,
-  toState,
-  type LiveEvent,
-  type TransactionState,
-} from './transactionState';
+import { applyTransactionEvents, toState, type TransactionState } from './transactionState';
 
 /**
  * What we keep in the cache for a user's transactions. `state` holds the
