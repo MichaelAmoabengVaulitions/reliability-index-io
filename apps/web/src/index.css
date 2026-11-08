@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    @apply h-full;
+  }
+  body {
+    @apply bg-slate-50 text-slate-900 antialiased;
+    font-family:
+      'Inter Variable',
+      system-ui,
+      -apple-system,
+      Segoe UI,
+      Roboto,
+      Helvetica,
+      Arial,
+      sans-serif;
+  }
+
+  /*
+   * The one focus style for every control. The forms plugin sets its own ring
+   * on inputs and selects, so those are named here too in order to replace it.
+   */
+  :focus-visible,
+  [type]:focus-visible,
+  select:focus-visible {
+    @apply outline outline-2 outline-offset-2 outline-brand-500;
+  }
+  [type]:focus,
+  select:focus {
+    @apply border-brand-500;
+    box-shadow: none;
+  }
+  .on-dark :focus-visible,
+  .on-dark select:focus-visible {
+    @apply outline-white;
+  }
+}
