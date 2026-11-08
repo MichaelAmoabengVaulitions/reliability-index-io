@@ -1,4 +1,4 @@
-import type { Transaction, TransactionEvent } from '@/api/schemas';
+import type { Transaction, TransactionEvent } from '@reliability-index/core/api/schemas';
 
 /*
  * Transactions are kept in two parts: byId, to find one straight away by its

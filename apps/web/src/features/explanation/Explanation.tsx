@@ -1,4 +1,5 @@
-import type { ReliabilityResponse } from '@/api/schemas';
+import type { ReliabilityResponse } from '@reliability-index/core/api/schemas';
+
 import { useDashboardParams } from '@/data/useDashboardParams';
 import { useReliability } from '@/data/useReliability';
 import {

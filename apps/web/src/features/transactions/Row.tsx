@@ -1,4 +1,5 @@
-import type { Transaction } from '@/api/schemas';
+import type { Transaction } from '@reliability-index/core/api/schemas';
+
 import { formatDate } from '@/domain/dates';
 import { formatMoney } from '@/domain/money';
 

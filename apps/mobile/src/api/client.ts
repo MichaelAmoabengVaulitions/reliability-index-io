@@ -1,4 +1,4 @@
-import type { z } from 'zod';
+import type { z } from '@reliability-index/core/zod';
 
 import { apiSettings } from './apiSettings';
 import {
@@ -11,7 +11,7 @@ import {
   type OffsetPaginatedResponse,
   type ReliabilityResponse,
   type Transaction,
-} from './schemas';
+} from '@reliability-index/core/api/schemas';
 
 function trimTrailingSlashes(url: string): string {
   return url.replace(/\/+$/, '');

@@ -1,4 +1,4 @@
-import type { Transaction, TransactionEvent } from '@/api/schemas';
+import type { Transaction, TransactionEvent } from '@reliability-index/core/api/schemas';
 
 // A live event together with the id the stream sent it with.
 export interface LiveEvent {

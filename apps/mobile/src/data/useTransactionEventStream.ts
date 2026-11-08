@@ -4,7 +4,7 @@ import EventSource, { type CustomEvent } from 'react-native-sse';
 
 import { apiSettings } from '@/api/apiSettings';
 import { transactionEventsUrl } from '@/api/client';
-import { transactionEventSchema, type TransactionEvent } from '@/api/schemas';
+import { transactionEventSchema, type TransactionEvent } from '@reliability-index/core/api/schemas';
 import { scoringWindowDates } from '@/domain/scoringWindow';
 import {
   applyTransactionEvents,

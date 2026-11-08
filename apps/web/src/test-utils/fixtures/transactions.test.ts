@@ -1,6 +1,6 @@
+import { transactionSchema } from '@reliability-index/core/api/schemas';
 import { describe, expect, it } from 'vitest';
 
-import { transactionSchema } from '@/api/schemas';
 
 import { buildTransactions } from './transactions';
 

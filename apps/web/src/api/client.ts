@@ -1,7 +1,3 @@
-import type { z } from 'zod';
-
-import { config } from '@/config';
-
 import {
   type DiscoveryResponse,
   type MerchantCategory,
@@ -12,7 +8,11 @@ import {
   merchantCategoriesResponseSchema,
   offsetPaginatedSchema,
   reliabilityResponseSchema,
-} from './schemas';
+} from '@reliability-index/core/api/schemas';
+import type { z } from '@reliability-index/core/zod';
+
+import { config } from '@/config';
+
 
 export function trimTrailingSlashes(url: string): string {
   return url.replace(/\/+$/, '');

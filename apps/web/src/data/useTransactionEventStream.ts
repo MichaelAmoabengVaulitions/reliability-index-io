@@ -1,8 +1,8 @@
+import { transactionEventSchema, type TransactionEvent } from '@reliability-index/core/api/schemas';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 
 import { transactionEventsUrl } from '@/api/client';
-import { transactionEventSchema, type TransactionEvent } from '@/api/schemas';
 import { config } from '@/config';
 
 import { discoveryQuery, type TransactionsQueryData } from './queries';

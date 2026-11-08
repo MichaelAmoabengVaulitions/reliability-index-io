@@ -1,7 +1,7 @@
+import type { Transaction } from '@reliability-index/core/api/schemas';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useRef } from 'react';
 
-import type { Transaction } from '@/api/schemas';
 import { config } from '@/config';
 
 import { Row } from './Row';

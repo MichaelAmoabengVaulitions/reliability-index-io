@@ -1,6 +1,6 @@
+import { reliabilityResponseSchema } from '@reliability-index/core/api/schemas';
 import { describe, expect, it } from 'vitest';
 
-import { reliabilityResponseSchema } from '@/api/schemas';
 
 import { buildReliabilityResponse } from './reliability';
 

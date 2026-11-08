@@ -1,4 +1,7 @@
-import type { Transaction as ApiTransaction, MerchantCategory } from '@/api/schemas';
+import type {
+  Transaction as ApiTransaction,
+  MerchantCategory,
+} from '@reliability-index/core/api/schemas';
 
 import type { Transaction } from './transactionList';
 

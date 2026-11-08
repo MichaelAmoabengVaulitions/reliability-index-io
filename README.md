@@ -7,7 +7,7 @@ repository.
 |---|---|
 | [apps/web](apps/web) | Reliability Index Explorer, the analyst dashboard (React, Vite) |
 | [apps/mobile](apps/mobile) | The mobile app (Expo, React Native) |
-| `packages/` | Code shared by both apps (coming next) |
+| [packages/core](packages/core) | Code shared by both apps (`@reliability-index/core`) |
 
 Each app's README explains what it does and how it works.
 
@@ -38,6 +38,10 @@ to be called with `yarn run check`, both here and inside each app.
   the layout Expo expects. Expo finds the workspace by itself, so there is no
   `metro.config.js`.
 - Both apps use React 19.3.0.
+- Shared code is in `packages/core`. The apps import it by file, for example
+  `@reliability-index/core/api/schemas`. It is TypeScript source with no build
+  step: Vite and Metro compile it along with each app. It holds the API
+  schemas so far, and owns the `zod` dependency for both apps.
 
 ## History
 

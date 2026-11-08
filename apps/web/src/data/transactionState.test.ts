@@ -1,6 +1,6 @@
+import type { TransactionEvent } from '@reliability-index/core/api/schemas';
 import { describe, expect, it } from 'vitest';
 
-import type { TransactionEvent } from '@/api/schemas';
 import { buildTransaction, buildTransactions } from '@/test-utils/fixtures/transactions';
 
 import {
