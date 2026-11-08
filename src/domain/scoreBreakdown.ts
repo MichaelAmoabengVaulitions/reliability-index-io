@@ -8,7 +8,7 @@ export interface BreakdownStep {
   note: string;
 }
 
-function pointsAdded(name: string, points: number, note: string): BreakdownStep {
+function buildAddedStep(name: string, points: number, note: string): BreakdownStep {
   return {
     name,
     points: `+${points}`,
@@ -18,7 +18,7 @@ function pointsAdded(name: string, points: number, note: string): BreakdownStep 
   };
 }
 
-function pointsTakenAway(name: string, points: number, note: string): BreakdownStep {
+function buildTakenAwayStep(name: string, points: number, note: string): BreakdownStep {
   return {
     name,
     points: `${minusSign}${points}`,
@@ -52,19 +52,19 @@ export function buildBreakdownSteps(score: ReliabilityScore): BreakdownStep[] {
     highRiskPenaltyPoints -
     otherPoints;
 
+  // Below zero only when other drivers add more than the score has left.
+  const incomeAndBillsNote = 'Regular income, income compared with bills, and bills paid';
   const steps = [
-    pointsAdded(
-      'Income and bills',
-      incomeAndBillsPoints,
-      'Regular income, income compared with bills, and bills paid',
-    ),
+    incomeAndBillsPoints < 0
+      ? buildTakenAwayStep('Income and bills', Math.abs(incomeAndBillsPoints), incomeAndBillsNote)
+      : buildAddedStep('Income and bills', incomeAndBillsPoints, incomeAndBillsNote),
   ];
   if (savingsPoints > 0) {
-    steps.push(pointsAdded('Savings', savingsPoints, 'Saves money regularly'));
+    steps.push(buildAddedStep('Savings', savingsPoints, 'Saves money regularly'));
   }
   if (daysBelowZeroPenaltyPoints > 0) {
     steps.push(
-      pointsTakenAway(
+      buildTakenAwayStep(
         'Days below zero',
         daysBelowZeroPenaltyPoints,
         `About ${score.daysBelowZero} days`,
@@ -73,11 +73,11 @@ export function buildBreakdownSteps(score: ReliabilityScore): BreakdownStep[] {
   }
   if (lateFeePenaltyPoints > 0) {
     const note = lateFees === 1 ? '1 late fee' : `${lateFees} late fees`;
-    steps.push(pointsTakenAway('Late fees', lateFeePenaltyPoints, note));
+    steps.push(buildTakenAwayStep('Late fees', lateFeePenaltyPoints, note));
   }
   if (highRiskPenaltyPoints > 0) {
     steps.push(
-      pointsTakenAway(
+      buildTakenAwayStep(
         'High-risk spending',
         highRiskPenaltyPoints,
         'Spending in high-risk categories',
@@ -85,8 +85,8 @@ export function buildBreakdownSteps(score: ReliabilityScore): BreakdownStep[] {
     );
   }
   for (const { text, points } of otherDrivers) {
-    if (points > 0) steps.push(pointsAdded(text, points, ''));
-    if (points < 0) steps.push(pointsTakenAway(text, Math.abs(points), ''));
+    if (points > 0) steps.push(buildAddedStep(text, points, ''));
+    if (points < 0) steps.push(buildTakenAwayStep(text, Math.abs(points), ''));
   }
   return steps;
 }

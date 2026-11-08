@@ -56,6 +56,25 @@ describe('buildBreakdownSteps', () => {
     expect(steps[steps.length - 1]).toMatchObject({ name: 'New backend rule', points: '−4' });
   });
 
+  it('shows income and bills as taken away when other drivers add more than the score', () => {
+    const score = {
+      ...sampleScores.user_1009,
+      score: 10,
+      savingsPoints: 0,
+      daysBelowZeroPenaltyPoints: 0,
+      lateFeePenaltyPoints: 0,
+      highRiskPenaltyPoints: 0,
+      otherDrivers: [{ text: 'New backend rule', points: 15 }],
+    };
+
+    expect(buildBreakdownSteps(score)[0]).toMatchObject({
+      name: 'Income and bills',
+      points: '−5',
+      barWidthPercent: 5,
+      kind: 'takenAway',
+    });
+  });
+
   it.each(Object.values(sampleScores))('adds up to the score for $userId', (score) => {
     const total = buildBreakdownSteps(score).reduce((sum, step) => {
       const size = step.barWidthPercent;
