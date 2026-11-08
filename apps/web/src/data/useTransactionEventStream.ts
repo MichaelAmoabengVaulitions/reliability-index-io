@@ -18,7 +18,7 @@ import {
 /**
  * The connection state of the live updates stream.
  *
- *  "idle":        nothing to connect to yet (no user picked).
+ *  "idle":        nothing to connect to (no user picked, or no stream host).
  *  "connecting":  the stream is opening, or it dropped and is being retried.
  *  "open":        the stream is connected and events are arriving.
  */
@@ -68,15 +68,17 @@ export function useTransactionEventStream(userId: string, from: string, to: stri
    * EventSource is a browser feature, and is missing in the test environment.
    * When it is not there we simply do nothing: the live badge stays idle and
    * tests keep working. We also wait for discovery, which says where to connect.
+   * If discovery names no stream host there is nothing to connect to, so the
+   * badge stays idle. The REST host does not serve the stream.
    */
   const eventSourceAvailable = typeof EventSource !== 'undefined';
+  const streamBaseUrl = discovery?.streamBaseUrl;
   const shouldSubscribe =
     eventSourceAvailable &&
-    discovery !== undefined &&
+    streamBaseUrl !== undefined &&
     userId.length > 0 &&
     from.length > 0 &&
     to.length > 0;
-  const streamBaseUrl = discovery?.streamBaseUrl;
 
   /*
    * We keep only the connecting/open part of the status here. The
