@@ -3,13 +3,15 @@ import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
 import { AppText } from '@/components/AppText';
+import { ErrorState } from '@/components/ErrorState';
+import { LoadingState } from '@/components/LoadingState';
 import { ScreenContainer } from '@/components/ScreenContainer';
 import { SelectField } from '@/components/SelectField';
 import { SelectionHeader } from '@/components/SelectionHeader';
+import { StreamStatus } from '@/components/StreamStatus';
+import { TransactionRow } from '@/components/TransactionRow';
 import { useLiveUpdates } from '@/data/LiveUpdates';
 import { useTransactions } from '@/data/useTransactions';
-import { formatTransactionAmount } from '@/domain/money';
-import { formatDateForRow } from '@/domain/scoringWindow';
 import {
   defaultTransactionFilters,
   filterAndSortTransactions,
@@ -21,9 +23,6 @@ import {
 } from '@/domain/transactionList';
 import { useSelection } from '@/selection/SelectionContext';
 import { colors, fontFamilies, fontSizes, layout } from '@/theme';
-
-import { ErrorState } from './ErrorState';
-import { LoadingState } from './LoadingState';
 
 const directionTabs: { direction: TransactionDirection; label: string }[] = [
   { direction: 'all', label: 'All' },
@@ -126,6 +125,8 @@ function TransactionList({ transactions }: { transactions: Transaction[] }) {
           keyExtractor={(transaction) => transaction.id}
           renderItem={({ item }) => <TransactionRow transaction={item} />}
           keyboardShouldPersistTaps="handled"
+          // On by default. It kept the old top row in view, so a new sort or filter scrolled down the list.
+          maintainVisibleContentPosition={{ disabled: true }}
           ListEmptyComponent={
             transactions.length === 0 ? (
               <NoTransactionsInWindow />
@@ -136,33 +137,6 @@ function TransactionList({ transactions }: { transactions: Transaction[] }) {
         />
       </View>
     </>
-  );
-}
-
-// The dot and the word both change, so the state is clear without relying on colour alone.
-function StreamStatus({ isConnected }: { isConnected: boolean }) {
-  const color = isConnected ? colors.streamConnected : colors.streamConnecting;
-  return (
-    <View style={styles.streamStatus}>
-      <View style={[styles.streamDot, { backgroundColor: color }]} />
-      <AppText size={fontSizes.secondary} weight="medium" color={color}>
-        {isConnected ? 'Live' : 'Connecting'}
-      </AppText>
-    </View>
-  );
-}
-
-function TransactionRow({ transaction }: { transaction: Transaction }) {
-  return (
-    <View style={styles.row}>
-      <View style={styles.rowDetails}>
-        <AppText numberOfLines={1}>{transaction.merchantName}</AppText>
-        <AppText size={fontSizes.secondary} color={colors.secondaryText}>
-          {formatDateForRow(transaction.date)} · {transaction.category}
-        </AppText>
-      </View>
-      <AppText weight="medium">{formatTransactionAmount(transaction.amount)}</AppText>
-    </View>
   );
 }
 
@@ -192,8 +166,8 @@ function NoMatchingTransactions({ onClear }: { onClear: () => void }) {
 const styles = StyleSheet.create({
   controls: { paddingHorizontal: layout.screenPadding },
   search: {
-    height: layout.controlHeight,
-    marginTop: 12,
+    minHeight: layout.controlHeight,
+    marginTop: 16,
     paddingHorizontal: 14,
     borderRadius: layout.controlRadius,
     backgroundColor: colors.controlBackground,
@@ -201,17 +175,17 @@ const styles = StyleSheet.create({
     fontFamily: fontFamilies.regular,
     fontSize: fontSizes.body,
   },
-  selectRow: { flexDirection: 'row', gap: 8, marginTop: 8 },
+  selectRow: { flexDirection: 'row', gap: 12, marginTop: 12 },
   directionTabs: {
     flexDirection: 'row',
     gap: 20,
-    marginTop: 4,
+    marginTop: 12,
     marginHorizontal: layout.screenPadding,
     borderBottomWidth: 1,
     borderBottomColor: colors.divider,
   },
   directionTab: {
-    height: layout.controlHeight,
+    minHeight: layout.controlHeight,
     marginBottom: -1,
     justifyContent: 'center',
     borderBottomWidth: 2,
@@ -221,25 +195,14 @@ const styles = StyleSheet.create({
   statusRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 8,
+    marginTop: 12,
     marginHorizontal: layout.screenPadding,
   },
-  streamStatus: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  streamDot: { width: 8, height: 8, borderRadius: 4 },
-  list: { flex: 1, marginTop: 16, marginHorizontal: layout.screenPadding },
-  row: {
-    height: layout.transactionRowHeight,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.divider,
-  },
-  rowDetails: { flex: 1, minWidth: 0 },
+  list: { flex: 1, marginTop: 8, marginHorizontal: layout.screenPadding },
   emptyState: { paddingVertical: 40, alignItems: 'center' },
   emptyHint: { marginTop: 4 },
   clearButton: {
-    height: layout.controlHeight,
+    minHeight: layout.controlHeight,
     marginTop: 8,
     paddingHorizontal: 16,
     justifyContent: 'center',

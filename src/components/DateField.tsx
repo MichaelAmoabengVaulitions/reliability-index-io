@@ -3,7 +3,7 @@ import { Platform, Pressable, StyleSheet } from 'react-native';
 
 import {
   earliestScoringDate,
-  formatDateForField,
+  formatDate,
   fromPickerDate,
   todayAsDate,
   toPickerDate,
@@ -34,12 +34,12 @@ export function DateField({ date, onDateChange }: DateFieldProps) {
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`End date, ${formatDateForField(date)}`}
+      accessibilityLabel={`End date, ${formatDate(date)}`}
       onPress={() => DateTimePickerAndroid.open(pickerOptions)}
       disabled={Platform.OS === 'ios'}
       style={styles.field}
     >
-      <AppText>{formatDateForField(date)}</AppText>
+      <AppText>{formatDate(date)}</AppText>
       {Platform.OS === 'ios' && (
         <DateTimePicker {...pickerOptions} display="compact" style={styles.invisiblePicker} />
       )}
@@ -49,7 +49,7 @@ export function DateField({ date, onDateChange }: DateFieldProps) {
 
 const styles = StyleSheet.create({
   field: {
-    height: layout.largeControlHeight,
+    minHeight: layout.largeControlHeight,
     marginTop: 4,
     paddingHorizontal: 14,
     justifyContent: 'center',

@@ -19,7 +19,7 @@ export function PrimaryButton({ label, onPress }: PrimaryButtonProps) {
 
 const styles = StyleSheet.create({
   button: {
-    height: layout.largeControlHeight,
+    minHeight: layout.largeControlHeight,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: layout.controlRadius,

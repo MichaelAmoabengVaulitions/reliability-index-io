@@ -7,7 +7,7 @@ import { AppText } from './AppText';
 import { BottomSheet } from './BottomSheet';
 
 export function UserSheet({ onClose }: { onClose: () => void }) {
-  const { userIds, selectUser } = useSelection();
+  const { userIds, selectedUserId, selectUser } = useSelection();
 
   function pickUser(userId: string) {
     selectUser(userId);
@@ -21,6 +21,7 @@ export function UserSheet({ onClose }: { onClose: () => void }) {
           <Pressable
             key={userId}
             accessibilityRole="button"
+            accessibilityState={{ selected: userId === selectedUserId }}
             onPress={() => pickUser(userId)}
             style={styles.row}
           >
@@ -36,7 +37,7 @@ const styles = StyleSheet.create({
   sheet: { height: layout.userSheetHeight },
   list: { flex: 1, marginTop: 8 },
   row: {
-    height: 56,
+    minHeight: 56,
     justifyContent: 'center',
     borderBottomWidth: 1,
     borderBottomColor: colors.divider,

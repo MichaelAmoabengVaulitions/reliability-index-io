@@ -78,7 +78,7 @@ export function SelectField<Option extends string>({
 const styles = StyleSheet.create({
   field: {
     flex: 1,
-    height: layout.controlHeight,
+    minHeight: layout.controlHeight,
     paddingLeft: 14,
     paddingRight: 32,
     justifyContent: 'center',

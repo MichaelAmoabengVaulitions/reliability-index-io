@@ -70,6 +70,14 @@ describe('CashflowScreen', () => {
     expect(screen.getByText('In €4,200 · Out €1,000')).toBeOnTheScreen();
   });
 
+  it('reads the average and each month to screen readers as one item each', async () => {
+    showStatus({ transactions: [transaction('1', '2026-05-14', -500)] });
+    await renderWithProviders(<CashflowScreen />);
+
+    expect(screen.getByLabelText('Overspent on average each month, €83')).toBeOnTheScreen();
+    expect(screen.getByLabelText('May 2026, −€500, In €0 · Out €500')).toBeOnTheScreen();
+  });
+
   it('shows a user who overspends', async () => {
     showStatus({ transactions: [transaction('1', '2026-10-02', -600)] });
     await renderWithProviders(<CashflowScreen />);

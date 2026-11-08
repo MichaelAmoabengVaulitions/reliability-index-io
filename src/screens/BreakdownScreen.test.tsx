@@ -49,6 +49,18 @@ describe('BreakdownScreen', () => {
     expect(screen.getAllByText('90')).toHaveLength(2);
   });
 
+  it('reads the heading, each step and the total to screen readers as one item each', async () => {
+    await renderWithProviders(<BreakdownScreen />);
+
+    expect(screen.getByLabelText('How the score was reached, 90')).toBeOnTheScreen();
+    expect(
+      screen.getByLabelText(
+        'Income and bills, +75, Regular income, income compared with bills, and bills paid',
+      ),
+    ).toBeOnTheScreen();
+    expect(screen.getByLabelText('Score, 90')).toBeOnTheScreen();
+  });
+
   it('has the same user and window buttons as every tab', async () => {
     await renderWithProviders(<BreakdownScreen />);
     expect(screen.getByLabelText(/Switch user/)).toBeOnTheScreen();

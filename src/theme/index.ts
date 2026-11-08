@@ -34,6 +34,8 @@ export const fontSizes = {
   secondary: 15,
   scaleLabel: 14,
   tabLabel: 12,
+  // Not in the design: the "User" and "Scoring window" labels inside the header buttons.
+  caption: 13,
 } as const;
 
 export const layout = {
