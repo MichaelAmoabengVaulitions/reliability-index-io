@@ -28,6 +28,11 @@ Run `yarn install` from this folder, not from inside an app. There is one
 Yarn 1 has its own built-in `yarn check` command, so the project scripts have
 to be called with `yarn run check`, both here and inside each app.
 
+GitHub runs `yarn run check` on every pull request to `main` and every push to
+`main`, then builds the web app and bundles the mobile app for iOS and Android
+(`.github/workflows/check.yml`). It does not run `expo-doctor`, because two of
+its checks depend on Expo's servers and sometimes fail for no reason.
+
 ## How the workspace is set up
 
 - The apps are Yarn workspaces, listed in the top `package.json`.
