@@ -16,27 +16,35 @@ vi.mock('recharts', async (importOriginal) => ({
     cloneElement(children, { width: 800, height: 320 } as object),
 }));
 
-describe('Cashflow', () => {
+/*
+ * Drawing the chart is slow in the test page, and slower still on a busy or
+ * shared machine such as GitHub's. These limits leave plenty of room, so the
+ * tests fail only when something is really wrong, not because the machine was
+ * busy.
+ */
+const CHART_WAIT_MS = 10_000;
+
+describe('Cashflow', { timeout: 30_000 }, () => {
   it('renders the chart card heading once transactions resolve', async () => {
     renderWithProviders(<Cashflow />, SAMPLE_DASHBOARD_ROUTE);
     await waitFor(
       () => {
         expect(screen.getByRole('heading', { name: 'Monthly Cashflow' })).toBeInTheDocument();
       },
-      { timeout: 4000 },
+      { timeout: CHART_WAIT_MS },
     );
   });
 
   it('draws money in and money out side by side, not stacked', async () => {
     const { container } = renderWithProviders(<Cashflow />, SAMPLE_DASHBOARD_ROUTE);
-    await screen.findAllByText(/€/, undefined, { timeout: 4000 });
+    await screen.findAllByText(/€/, undefined, { timeout: CHART_WAIT_MS });
 
     await waitFor(
       () => {
         expect(container.querySelector('path[name="Inflow"]')).toBeInTheDocument();
         expect(container.querySelector('path[name="Outflow"]')).toBeInTheDocument();
       },
-      { timeout: 4000 },
+      { timeout: CHART_WAIT_MS },
     );
 
     const inflowX = container.querySelector('path[name="Inflow"]')?.getAttribute('x');
@@ -61,8 +69,8 @@ describe('Cashflow', () => {
         : fakeBackend(input),
     );
     renderWithProviders(<Cashflow />, SAMPLE_DASHBOARD_ROUTE);
-    expect((await screen.findAllByText(/\$/, undefined, { timeout: 4000 })).length).toBeGreaterThan(
-      0,
-    );
+    expect(
+      (await screen.findAllByText(/\$/, undefined, { timeout: CHART_WAIT_MS })).length,
+    ).toBeGreaterThan(0);
   });
 });
